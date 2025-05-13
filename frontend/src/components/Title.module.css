@@ -1,0 +1,31 @@
+.articleDetails {
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.articleDetails h2 {
+  display: flex;
+  justify-content: center;
+  
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.articleDetails p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+  
+  margin-right: 23%;
+  
+}
+
+/* Example hover effect (optional) */
+.articleDetails:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}

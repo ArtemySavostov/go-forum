@@ -1,0 +1,811 @@
+basePath: /
+definitions:
+  models.Article:
+    properties:
+      article_id:
+        example: 7a2be7e3-b34b-43d6-8e62-daa9f615f037
+        type: string
+      author_id:
+        example: 67f64f84963c9e7f74634284
+        type: string
+      content:
+        example: Content
+        type: string
+      created_at:
+        example: "2025-04-15T20:27:56.805+00:00"
+        type: string
+      title:
+        example: New title
+        type: string
+      updated_at:
+        example: "2025-04-15T20:27:56.805+00:00"
+        type: string
+    type: object
+  models.Comment:
+    properties:
+      'article_id example:':
+        type: string
+      comment_author:
+        example: 6805e865276e7a3ca751f2b1
+        type: string
+      comment_author_name:
+        example: ""
+        type: string
+      comment_id:
+        example: 87bcf5bd-9725-4aef-937b-f2e651258c97
+        type: string
+      comment_text:
+        example: Comment content
+        type: string
+      created_comment_at:
+        example: "2025-04-21T10:44:39.309+00:00"
+        type: string
+      'updated_comment_at example:':
+        type: string
+    type: object
+  models.CreateArticleResponse:
+    properties:
+      article_id:
+        example: 7a2be7e3-b34b-43d6-8e62-daa9f615f037
+        type: string
+      author_id:
+        example: 67f64f84963c9e7f74634284
+        type: string
+      content:
+        example: Content
+        type: string
+      created_at:
+        example: "2025-04-15T20:27:56.805+00:00"
+        type: string
+      title:
+        example: New title
+        type: string
+      updated_at:
+        example: "2025-04-15T20:27:56.805+00:00"
+        type: string
+    type: object
+  models.CreateCommentBadRequest:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: Article ID is required
+        type: string
+    type: object
+  models.CreateCommentResponse:
+    properties:
+      code:
+        example: 201
+        type: integer
+      message:
+        example: Create comment succesfully
+        type: string
+    type: object
+  models.CreateCommentServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: Failed to create comment
+        type: string
+    type: object
+  models.DeleteArticleRequest:
+    properties:
+      article_id:
+        example: 7a2be7e3-b34b-43d6-8e62-daa9f615f037
+        type: string
+    type: object
+  models.DeleteArticleResponse:
+    properties:
+      code:
+        example: 201
+        type: integer
+      message:
+        example: Delete article succesfully
+        type: string
+    type: object
+  models.DeleteCommentRequest:
+    properties:
+      comment_id:
+        example: 87bcf5bd-9725-4aef-937b-f2e651258c97
+        type: string
+    type: object
+  models.DeleteCommentResponse:
+    properties:
+      code:
+        example: 201
+        type: integer
+      message:
+        example: Comment deleted succesfully
+        type: string
+    type: object
+  models.DeleteCommentServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: Failed to delete comment
+        type: string
+    type: object
+  models.DeleteServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: Failed to delete article
+        type: string
+    type: object
+  models.GetAllCommentsResponse:
+    properties:
+      code:
+        example: 201
+        type: integer
+      message:
+        example: Comments list...
+        type: string
+    type: object
+  models.GetAllCommentsServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: Failed to get comments
+        type: string
+    type: object
+  models.GetArticleByIDRequest:
+    properties:
+      article_id:
+        example: 7a2be7e3-b34b-43d6-8e62-daa9f615f037
+        type: string
+    type: object
+  models.GetArticleByIDResponse:
+    properties:
+      article_id:
+        example: 7a2be7e3-b34b-43d6-8e62-daa9f615f037
+        type: string
+      author_id:
+        example: 67f64f84963c9e7f74634284
+        type: string
+      content:
+        example: Content
+        type: string
+      created_at:
+        example: "2025-04-15T20:27:56.805+00:00"
+        type: string
+      title:
+        example: New title
+        type: string
+      updated_at:
+        example: "2025-04-15T20:27:56.805+00:00"
+        type: string
+    type: object
+  models.GetCommentByIdRequest:
+    properties:
+      comment_id:
+        example: 87bcf5bd-9725-4aef-937b-f2e651258c97
+        type: string
+    type: object
+  models.GetCommentByIdResponse:
+    properties:
+      'article_id example:':
+        type: string
+      code:
+        example: 201
+        type: integer
+      comment_author:
+        example: 6805e865276e7a3ca751f2b1
+        type: string
+      comment_author_name:
+        example: ""
+        type: string
+      comment_id:
+        example: 87bcf5bd-9725-4aef-937b-f2e651258c97
+        type: string
+      comment_text:
+        example: Comment content
+        type: string
+      created_comment_at:
+        example: "2025-04-21T10:44:39.309+00:00"
+        type: string
+      message:
+        example: Get comment succesfully
+        type: string
+      'updated_comment_at example:':
+        type: string
+    type: object
+  models.GetCommentByIdServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: Failed to get comment
+        type: string
+    type: object
+  models.GetCommentsByArticleIDRequest:
+    properties:
+      'article_id example:':
+        type: string
+    type: object
+  models.GetCommentsByArticleIDServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: Failed to get comments
+        type: string
+    type: object
+  models.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: Invalid request body
+        type: string
+    type: object
+  models.InternalServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: Failed to get article
+        type: string
+    type: object
+  models.NewArticleRequest:
+    properties:
+      author_id:
+        example: 67f64f84963c9e7f74634284
+        type: string
+      content:
+        example: Content
+        type: string
+      title:
+        example: New title
+        type: string
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        type: string
+    type: object
+  models.NewCreateCommentRequest:
+    properties:
+      comment_text:
+        example: Comment content
+        type: string
+    type: object
+  models.ServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: Failed to create article
+        type: string
+    type: object
+  models.StatusCommentNotFound:
+    properties:
+      code:
+        example: 404
+        type: integer
+      message:
+        example: Comment not founf
+        type: string
+    type: object
+  models.StatusForbidden:
+    properties:
+      code:
+        example: 403
+        type: integer
+      message:
+        example: Forbiden
+        type: string
+    type: object
+  models.StatusUnauthorized:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: Unauthorized
+        type: string
+    type: object
+  models.UpdateArticleRequest:
+    properties:
+      article_id:
+        example: 7a2be7e3-b34b-43d6-8e62-daa9f615f037
+        type: string
+      author_id:
+        example: 67f64f84963c9e7f74634284
+        type: string
+      content:
+        example: Content
+        type: string
+      created_at:
+        example: "2025-04-15T20:27:56.805+00:00"
+        type: string
+      title:
+        example: New title
+        type: string
+      updated_at:
+        example: "2025-04-15T20:27:56.805+00:00"
+        type: string
+    type: object
+  models.UpdateArticleResponse:
+    properties:
+      article_id:
+        example: 7a2be7e3-b34b-43d6-8e62-daa9f615f037
+        type: string
+      author_id:
+        example: 67f64f84963c9e7f74634284
+        type: string
+      content:
+        example: Content
+        type: string
+      created_at:
+        example: "2025-04-15T20:27:56.805+00:00"
+        type: string
+      title:
+        example: New title
+        type: string
+      updated_at:
+        example: "2025-04-15T20:27:56.805+00:00"
+        type: string
+    type: object
+  models.UpdateCommentBadRequest:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: Article ID is required
+        type: string
+    type: object
+  models.UpdateCommentRequest:
+    properties:
+      code:
+        example: 201
+        type: integer
+      comment_author:
+        example: 6805e865276e7a3ca751f2b1
+        type: string
+      comment_id:
+        example: 87bcf5bd-9725-4aef-937b-f2e651258c97
+        type: string
+      comment_text:
+        example: Comment content
+        type: string
+      created_comment_at:
+        example: "2025-04-21T10:44:39.309+00:00"
+        type: string
+      message:
+        example: Get comment succesfully
+        type: string
+      'updated_comment_at example:':
+        type: string
+    type: object
+  models.UpdateCommentResponse:
+    properties:
+      code:
+        example: 201
+        type: integer
+      message:
+        example: Comment updated succesfully
+        type: string
+    type: object
+  models.UpdateCommentServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: Failed to update comment
+        type: string
+    type: object
+  models.UpdateServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: Failed to update article
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: AuthServer
+  title: User service
+  version: "1.0"
+paths:
+  /article/:id:
+    get:
+      consumes:
+      - application/json
+      description: GetArticleByID
+      parameters:
+      - description: Create New Article
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.GetArticleByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetArticleByIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusUnauthorized'
+        "500":
+          description: Failed to get article
+          schema:
+            $ref: '#/definitions/models.InternalServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: GetArticleByID
+      tags:
+      - Article
+  /articles:
+    get:
+      consumes:
+      - application/json
+      description: GetAllArticles
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: artile
+          schema:
+            items:
+              $ref: '#/definitions/models.Article'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.HTTPError'
+        "500":
+          description: Failed to get articles
+          schema:
+            $ref: '#/definitions/models.InternalServerError'
+      summary: GetAllArticles
+      tags:
+      - Article
+    post:
+      consumes:
+      - application/json
+      description: CreateNewArticle
+      parameters:
+      - description: Create New Article
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.NewArticleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Article created successfully
+          schema:
+            $ref: '#/definitions/models.CreateArticleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusUnauthorized'
+        "500":
+          description: Failed to create article
+          schema:
+            $ref: '#/definitions/models.ServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateArticle
+      tags:
+      - Article
+  /articles/:articleId/comments:
+    get:
+      consumes:
+      - application/json
+      description: GetCommentsByArticleID
+      parameters:
+      - description: Dlete comment
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.GetCommentsByArticleIDRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Comments
+          schema:
+            $ref: '#/definitions/models.Comment'
+        "500":
+          description: Failed to get comments
+          schema:
+            $ref: '#/definitions/models.GetCommentsByArticleIDServerError'
+      summary: GetCommentsByArticleID
+      tags:
+      - Comment
+    post:
+      consumes:
+      - application/json
+      description: CreateComment
+      parameters:
+      - description: Create New Article
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.NewCreateCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Comment created successfully
+          schema:
+            $ref: '#/definitions/models.CreateCommentResponse'
+        "400":
+          description: Article ID is required
+          schema:
+            $ref: '#/definitions/models.CreateCommentBadRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusUnauthorized'
+        "500":
+          description: Failed to create comment
+          schema:
+            $ref: '#/definitions/models.CreateCommentServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateComment
+      tags:
+      - Comment
+  /articles/:id:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        DeleteArticle
+        UpdateArticle
+      parameters:
+      - description: Delete article succesfully
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.DeleteArticleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Article deleted successfully
+          schema:
+            $ref: '#/definitions/models.DeleteArticleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusUnauthorized'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.StatusForbidden'
+        "500":
+          description: Failed to delete article
+          schema:
+            $ref: '#/definitions/models.DeleteServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteArticle
+      tags:
+      - Article
+    post:
+      consumes:
+      - application/json
+      description: |-
+        UpdateArticle
+        UpdateArticle
+      parameters:
+      - description: Update srticle succesfully
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateArticleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Article updated successfully
+          schema:
+            $ref: '#/definitions/models.UpdateArticleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusUnauthorized'
+        "500":
+          description: Failed to update article
+          schema:
+            $ref: '#/definitions/models.UpdateServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateArticle
+      tags:
+      - Article
+  /comments:
+    get:
+      consumes:
+      - application/json
+      description: GetAllComments
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 200OK
+          schema:
+            $ref: '#/definitions/models.GetAllCommentsResponse'
+        "400":
+          description: Article ID is required
+          schema:
+            $ref: '#/definitions/models.UpdateCommentBadRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusUnauthorized'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.StatusForbidden'
+        "404":
+          description: Comment not found
+          schema:
+            $ref: '#/definitions/models.StatusCommentNotFound'
+        "500":
+          description: Failed to get comments
+          schema:
+            $ref: '#/definitions/models.GetAllCommentsServerError'
+      summary: GetAllComments
+      tags:
+      - Comment
+  /comments/:id:
+    delete:
+      consumes:
+      - application/json
+      description: DeleteComment
+      parameters:
+      - description: Dlete comment
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.DeleteCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Comment delete successfully
+          schema:
+            $ref: '#/definitions/models.DeleteCommentResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusUnauthorized'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.StatusForbidden'
+        "404":
+          description: Comment not found
+          schema:
+            $ref: '#/definitions/models.StatusCommentNotFound'
+        "500":
+          description: Failed to delete comment
+          schema:
+            $ref: '#/definitions/models.DeleteCommentServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteComment
+      tags:
+      - Comment
+    get:
+      consumes:
+      - application/json
+      description: GetCommentById
+      parameters:
+      - description: Create New Article
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.GetCommentByIdRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Comment created successfully
+          schema:
+            $ref: '#/definitions/models.GetCommentByIdResponse'
+        "500":
+          description: Failed to get comment
+          schema:
+            $ref: '#/definitions/models.GetCommentByIdServerError'
+      summary: GetCommentById
+      tags:
+      - Comment
+    post:
+      consumes:
+      - application/json
+      description: UpdateComment
+      parameters:
+      - description: Create New Article
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Comment created successfully
+          schema:
+            $ref: '#/definitions/models.UpdateCommentResponse'
+        "400":
+          description: Article ID is required
+          schema:
+            $ref: '#/definitions/models.UpdateCommentBadRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusUnauthorized'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.StatusForbidden'
+        "404":
+          description: Comment not found
+          schema:
+            $ref: '#/definitions/models.StatusCommentNotFound'
+        "500":
+          description: Failed to update comment
+          schema:
+            $ref: '#/definitions/models.UpdateCommentServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateComment
+      tags:
+      - Comment
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

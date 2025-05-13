@@ -1,0 +1,273 @@
+/* ProductList.module.css */
+
+.productListContainer {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.createArticleForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.inputField, .textAreaField {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.textAreaField {
+    resize: vertical; /* Allow vertical resizing */
+    min-height: 100px;
+}
+
+.createButton {
+    background-color: #007bff; /* Green */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease; /* плавное изменение цвета фона */
+}
+
+.createButton:hover {
+    background-color: black;
+}
+
+.productItem {
+    display: flex;
+    justify-content:center;
+    align-content: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    width: 10%;
+}
+
+.productLink {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.productLink:hover {
+    text-decoration: underline;
+}
+
+.editForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.editButton, .updateButton, .cancelButton {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: opacity 0.3s ease; /* плавное изменение прозрачности */
+}
+
+.editButton {
+    background-color: #007bff; /* Blue */
+    color: white;
+}
+
+.updateButton {
+    background-color: #28a745; /* Green */
+    color: white;
+}
+
+.cancelButton {
+    background-color: #dc3545; /* Red */
+    color: white;
+}
+
+.editButton:hover, .updateButton:hover, .cancelButton:hover {
+    opacity: 0.8;
+}
+
+/* Chat Styles */
+.chatContainer {
+    margin-top: 20px;
+    border: 1px solid #ddd; /* Более светлый цвет рамки */
+    border-radius: 8px; /* Скругленные углы */
+    padding: 15px; /* Больше отступов */
+    background-color: #fff; /* Белый фон */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Небольшая тень */
+    
+}
+
+.messageList {
+    height: 300px; /* Увеличиваем высоту */
+    overflow-y: auto;
+    border: 1px solid #eee; /* Еще более светлый цвет рамки */
+    border-radius: 6px; /* Скругленные углы */
+    padding: 10px; /* Больше отступов */
+    margin-bottom: 15px; /* Больше отступ снизу */
+}
+
+/* Улучшаем скроллбар (для Chrome, Edge, Safari) */
+.messageList::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messageList::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.messageList::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.messageList::-webkit-scrollbar-thumb:hover {
+    background: #bbb;
+}
+
+
+.message {
+    padding: 8px; /* Больше отступов */
+    border-bottom: 1px solid #f1f1f1; /* Еще более светлый цвет разделителя */
+    word-break: break-word; /* Перенос длинных слов */
+}
+
+.message:last-child {
+    border-bottom: none; /* Убираем разделитель у последнего сообщения */
+}
+
+.messageInput {
+    display: flex;
+    gap: 10px; /* Расстояние между полем ввода и кнопкой */
+}
+
+/* Используем существующие стили для поля ввода и кнопки */
+.messageInput .inputField {
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 6px; /* Скругленные углы */
+    font-size: 16px; /* Больше размер шрифта */
+}
+
+.messageInput .createButton {
+    padding: 10px 15px;
+    background-color: #007bff; /* Более современный цвет кнопки */
+    color: white;
+    border: none;
+    border-radius: 6px; /* Скругленные углы */
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease; /* Плавное изменение цвета фона */
+}
+
+.messageInput .createButton:hover {
+    background-color: #0056b3; /* Затемняем цвет при наведении */
+}
+
+.messageInput .createButton:disabled {
+    background-color: #ccc; /* Серый цвет для неактивной кнопки */
+    cursor: not-allowed; /* Меняем курсор */
+}
+
+.messageInput .createButton:disabled:hover {
+    background-color: #ccc; /* Цвет не меняется при наведении на неактивную кнопку */
+}
+.productListContainer {
+    padding: 20px;
+  }
+  
+  .createArticleForm {
+    margin-bottom: 20px;
+  }
+  
+  .productsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  
+  .productItem {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    height: 150px; /* Фиксированная высота */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .productLink {
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .profileSection {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+.productListContainer {
+  padding: 20px;
+}
+
+.createArticleForm {
+  margin-bottom: 20px;
+}
+
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.productItem {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    height: 150px; /* Фиксированная высота */
+    width: 75%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word; /* Перенос слов, если они не помещаются */
+    overflow: hidden; /* Скрываем все, что выходит за границы */
+  }
+  
+  .productLink {
+    text-decoration: none;
+    color: #333;
+    display: block; /* Занимаем всю площадь productItem */
+    width: 100%;
+    height: 100%;
+    overflow: auto; /*  Автоматическое добавление полосы прокрутки, если текст не помещается */
+    white-space: normal; /* Разрешаем перенос строк */
+  }
+  
+  
+
+.profileSection {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+  
+.headerMain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+}

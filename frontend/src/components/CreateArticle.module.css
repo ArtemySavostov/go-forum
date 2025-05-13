@@ -1,0 +1,77 @@
+
+.createArticleContainer {
+    width: 80%; /* Ширина контейнера */
+    max-width: 600px; /* Максимальная ширина */
+    margin: 20px auto; /* Центрирование по горизонтали и небольшой отступ сверху */
+    padding: 20px;
+    background-color: #f9f9f9; /* Светлый фон */
+    border-radius: 8px; /* Закругленные углы */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Легкая тень */
+    font-family: sans-serif;
+  }
+  
+  .createArticleContainer h2 {
+    text-align: center; /* Выравнивание заголовка по центру */
+    color: #333; /* Цвет заголовка */
+    margin-bottom: 20px; /* Отступ снизу */
+  }
+  
+  .createArticleForm {
+    display: flex;
+    flex-direction: column; /* Расположение элементов формы по вертикали */
+  }
+  
+  .inputField,
+  .textAreaField {
+    padding: 10px; /* Внутренний отступ */
+    margin-bottom: 15px; /* Отступ снизу */
+    border: 1px solid #ddd; /* Тонкая граница */
+    border-radius: 4px; /* Закругленные углы */
+    font-size: 16px; /* Размер шрифта */
+    color: #555; /* Цвет текста */
+    outline: none; /* Убираем обводку при фокусе */
+  }
+  
+  .inputField:focus,
+  .textAreaField:focus {
+    border-color: #007bff; /* Меняем цвет границы при фокусе */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Добавляем тень при фокусе */
+  }
+  
+  .textAreaField {
+    resize: vertical; /* Разрешаем изменение высоты */
+    min-height: 150px; /* Минимальная высота текстового поля */
+  }
+  
+  .createButton {
+    padding: 12px 20px; /* Внутренние отступы кнопки */
+    background-color: #007bff; /* Цвет фона кнопки */
+    color: #fff; /* Белый текст на кнопке */
+    border: none; /* Убираем границу */
+    border-radius: 4px; /* Закругленные углы */
+    font-size: 18px; /* Размер шрифта */
+    cursor: pointer; /* Меняем курсор при наведении */
+    transition: background-color 0.3s ease; /* Плавный переход цвета фона */
+  }
+  
+  .createButton:hover {
+    background-color: #0056b3; /* Затемняем цвет фона при наведении */
+  }
+  
+  /* Адаптивность для маленьких экранов */
+  @media (max-width: 480px) {
+    .createArticleContainer {
+      width: 95%; /* Занимает почти всю ширину экрана */
+      padding: 15px; /* Уменьшаем отступы */
+    }
+  
+    .inputField,
+    .textAreaField {
+      font-size: 14px; /* Уменьшаем размер шрифта */
+    }
+  
+    .createButton {
+      font-size: 16px; /* Уменьшаем размер шрифта */
+    }
+  }
+  

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -10,18 +11,30 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var ErrInvalidToken = errors.New("invalid token")
+
 func loadEnv() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
 	}
 }
 
-func GenerateToken(username string, userID string) (string, error) {
+type JWTAuthService struct {
+	SecretKey string
+}
+
+func NewJWTAuthService(secretKey string) *JWTAuthService {
+	return &JWTAuthService{
+		SecretKey: secretKey,
+	}
+}
+
+func (s *JWTAuthService) GenerateToken(username string, userID string, email string) (string, error) {
 	loadEnv()
 
 	secretKey := os.Getenv("JWT_SECRET")
 	if secretKey == "" {
-		secretKey = "your-secret-key"
+		secretKey = s.SecretKey
 	}
 
 	tokenDuration, err := time.ParseDuration(os.Getenv("JWT_DURATION"))
@@ -32,6 +45,7 @@ func GenerateToken(username string, userID string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
 		"id":       userID,
+		"email":    email,
 		"exp":      time.Now().Add(tokenDuration).Unix(),
 	})
 
@@ -43,12 +57,13 @@ func GenerateToken(username string, userID string) (string, error) {
 	return tokenString, nil
 }
 
-func ValidateToken(tokenString string) (string, string, error) {
+func (s *JWTAuthService) ValidateToken(tokenString string) (string, error) {
+
 	loadEnv()
 
 	secretKey := os.Getenv("JWT_SECRET")
 	if secretKey == "" {
-		secretKey = "your-secret-key"
+		secretKey = s.SecretKey
 	}
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -60,22 +75,19 @@ func ValidateToken(tokenString string) (string, string, error) {
 	})
 
 	if err != nil {
-		return "", "", fmt.Errorf("couldn't parse token: %w", err)
+		return "", fmt.Errorf("couldn't parse token: %w", err)
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
-	if ok && token.Valid {
-		username, ok := claims["username"].(string)
-		if !ok {
-			return "", "", fmt.Errorf("invalid username claim")
-		}
-		userID, ok := claims["id"].(string)
-		if !ok {
-			return "", "", fmt.Errorf("invalid user ID claim")
-		}
+	if !ok || !token.Valid {
+		return "", ErrInvalidToken
 
-		return username, userID, nil
 	}
 
-	return "", "", fmt.Errorf("invalid token")
+	userID, ok := claims["id"].(string)
+	if !ok {
+		return "", fmt.Errorf("invalid user ID claim")
+	}
+
+	return userID, nil
 }

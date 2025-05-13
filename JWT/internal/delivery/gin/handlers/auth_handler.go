@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"JWT/internal/usecase"
+	_ "JWT/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,11 +19,21 @@ func NewAuthHandler(authUC usecase.AuthUseCase) *AuthHandler {
 	return &AuthHandler{authUC: authUC}
 }
 
+// @Summary registr a new user
+// @Description Registers a new user and returns a JWT token.
+// @Tags register
+// @Accept json
+// @Produce json
+// @Param request body models.RegisterRequest true "Registration request body"
+// @Success 201 {object} models.RegisterResponse "Successfully registered user"
+// @Failure 400 {object} models.HTTPError "Invalid request body"
+// @Failure 500 {object} models.HTTPError "Internal server error"
+// @Router /register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req struct {
-		Username string `json:"username"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Username string `json:"username" binding:"required"`
+		Email    string `json:"email" binding:"required"`
+		Password string `json:"password" binding:"required"`
 	}
 
 	if err := c.BindJSON(&req); err != nil {
@@ -39,6 +50,17 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"token": token})
 }
 
+// @Summary Login
+// @Description Login user
+// @Tags login
+// @Accept json
+// @Produce json
+// @Param request body models.LoginRequest true "Login request body"
+// @Success 201 {object} models.LoginResponse "Successfully login user"
+// @Failure 400 {object} models.HTTPError "Invalid request body"
+// @Failure 401 {object} models.StatusUnauthorized "Status Unauthorized"
+// @Failure 500 {object} models.ServerError "Internal server error"
+// @Router /login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req struct {
 		Username string `json:"username"`

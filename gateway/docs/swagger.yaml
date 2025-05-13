@@ -1,0 +1,301 @@
+basePath: /
+host: localhost:8000
+info:
+  contact: {}
+  description: AuthServer
+  title: User service
+  version: "1.0"
+paths:
+  /article/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Proxy GET/POST request /articles, GET/PUT/DELETE /article/:id,
+        GET/POST /articles/:articleId/comments to Articles Service
+      parameters:
+      - description: ID статьи
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succses respons
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Gateway server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Articles Service
+      tags:
+      - Articles
+    get:
+      consumes:
+      - application/json
+      description: Proxy GET/POST request /articles, GET/PUT/DELETE /article/:id,
+        GET/POST /articles/:articleId/comments to Articles Service
+      parameters:
+      - description: ID статьи
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succses respons
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Gateway server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Articles Service
+      tags:
+      - Articles
+    put:
+      consumes:
+      - application/json
+      description: Proxy GET/POST request /articles, GET/PUT/DELETE /article/:id,
+        GET/POST /articles/:articleId/comments to Articles Service
+      parameters:
+      - description: ID статьи
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succses respons
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Gateway server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Articles Service
+      tags:
+      - Articles
+  /articles:
+    get:
+      consumes:
+      - application/json
+      description: Proxy GET/POST request /articles, GET/PUT/DELETE /article/:id,
+        GET/POST /articles/:articleId/comments to Articles Service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succses respons
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Gateway server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Articles Service
+      tags:
+      - Articles
+    post:
+      consumes:
+      - application/json
+      description: Proxy GET/POST request /articles, GET/PUT/DELETE /article/:id,
+        GET/POST /articles/:articleId/comments to Articles Service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succses respons
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Gateway server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Articles Service
+      tags:
+      - Articles
+  /articles/{articleId}/comments:
+    get:
+      consumes:
+      - application/json
+      description: Proxy GET/POST request /articles, GET/PUT/DELETE /article/:id,
+        GET/POST /articles/:articleId/comments to Articles Service
+      parameters:
+      - description: ArticleId
+        in: path
+        name: articleId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succses respons
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Gateway server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Articles Service
+      tags:
+      - Articles
+    post:
+      consumes:
+      - application/json
+      description: Proxy GET/POST request /articles, GET/PUT/DELETE /article/:id,
+        GET/POST /articles/:articleId/comments to Articles Service
+      parameters:
+      - description: ArticleId
+        in: path
+        name: articleId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succses respons
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Gateway server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Articles Service
+      tags:
+      - Articles
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Proxy POST request /login and /register, GET/POST request /users/*path
+        to Users Service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succses respons
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Gateway server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Users Service
+      tags:
+      - Users
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Proxy POST request /login and /register, GET/POST request /users/*path
+        to Users Service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succses respons
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Gateway server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Users Service
+      tags:
+      - Users
+  /users/{path}:
+    get:
+      consumes:
+      - application/json
+      description: Proxy POST request /login and /register, GET/POST request /users/*path
+        to Users Service
+      parameters:
+      - description: Path после /users
+        in: path
+        name: path
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succses respons
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Gateway server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Users Service
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Proxy POST request /login and /register, GET/POST request /users/*path
+        to Users Service
+      parameters:
+      - description: Path после /users
+        in: path
+        name: path
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succses respons
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Gateway server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Users Service
+      tags:
+      - Users
+swagger: "2.0"

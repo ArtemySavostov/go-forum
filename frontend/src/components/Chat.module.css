@@ -1,0 +1,100 @@
+.chatContainer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    max-height: 400px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: all 0.3s ease; /* Smooth transition for show/hide */
+}
+
+.chatContainer.collapsed {
+    max-height: 40px; /* Minimum height when collapsed (for header) */
+    overflow: hidden; /* Hide content when collapsed */
+}
+
+.chatHeader {
+    background-color: #f0f0f0; /* Light gray header */
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer; /* Make the header clickable */
+}
+
+.chatHeader h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.toggleButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.messageList {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.message {
+    padding: 5px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.message:last-child {
+    border-bottom: none;
+}
+
+.userName {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.inputArea {
+    display: flex;
+    padding: 10px;
+}
+
+.messageInput {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.sendButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.sendButton:hover {
+    background-color: #3e8e41;
+}
+
+.errorMessage {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+}

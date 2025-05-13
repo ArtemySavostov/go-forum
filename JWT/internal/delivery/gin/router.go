@@ -7,21 +7,26 @@ import (
 	"net/http"
 	"strings"
 
+	_ "JWT/docs"
+
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetupRouter(authHandler *handlers.AuthHandler, userHandler *handlers.UserHandler) *gin.Engine {
+func SetupRouter(authHandler *handlers.AuthHandler, userHandler *handlers.UserHandler, authService auth.AuthService) *gin.Engine {
 	r := gin.Default()
 
 	r.POST("/register", authHandler.Register)
 	r.POST("/login", authHandler.Login)
 
-	r.GET("/users/:id", AuthMiddleware(), userHandler.GetUser)
+	r.GET("/users/:id", AuthMiddleware(authService), userHandler.GetUser)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return r
 }
 
-func AuthMiddleware() gin.HandlerFunc {
+func AuthMiddleware(authService auth.AuthService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -36,14 +41,16 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		token := parts[1]
-		username, _, err := auth.ValidateToken(token)
+		userID, err := authService.ValidateToken(token)
 		if err != nil {
 			log.Printf("Invalid token: %v", err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 			return
 		}
+		log.Printf("Username from token: %s", userID)
 
-		c.Set("username", username)
+		c.Set("userID", userID)
+
 		c.Next()
 	}
 }

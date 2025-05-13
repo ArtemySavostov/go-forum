@@ -1,0 +1,137 @@
+basePath: /
+definitions:
+  models.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: Invalid request body
+        type: string
+    type: object
+  models.LoginRequest:
+    properties:
+      password:
+        example: password123
+        type: string
+      username:
+        example: john_doe
+        type: string
+    type: object
+  models.LoginResponse:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        type: string
+    type: object
+  models.RegisterRequest:
+    properties:
+      email:
+        example: john.doe@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+      username:
+        example: john_doe
+        type: string
+    type: object
+  models.RegisterResponse:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        type: string
+    type: object
+  models.ServerError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: Internal Server Error
+        type: string
+    type: object
+  models.StatusUnauthorized:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: Status Unauthorized
+        type: string
+    type: object
+host: localhost:8088
+info:
+  contact: {}
+  description: AuthServer
+  title: User service
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login user
+      parameters:
+      - description: Login request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully login user
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/models.HTTPError'
+        "401":
+          description: Status Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusUnauthorized'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ServerError'
+      summary: Login
+      tags:
+      - login
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new user and returns a JWT token.
+      parameters:
+      - description: Registration request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully registered user
+          schema:
+            $ref: '#/definitions/models.RegisterResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/models.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.HTTPError'
+      summary: registr a new user
+      tags:
+      - register
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

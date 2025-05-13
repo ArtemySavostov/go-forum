@@ -1,38 +1,184 @@
-.App {
+App.css
+
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+.container {
+  width: 80%;
+  margin: 0 auto; /* Center the container */
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Style for the header (if you have one in Title component) */
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
   text-align: center;
+  margin-bottom: 20px;
+  border-radius: 5px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Style for navigation (if you have one) */
+nav {
+  margin-bottom: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex; /* Arrange navigation items horizontally */
+  justify-content: space-around; /* Distribute items evenly */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+nav li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: #eee; /* Light background for links */
+  transition: background-color 0.3s ease;
+}
+
+nav li a:hover {
+  background-color: #ddd;
+}
+
+/* Style for forms (Login, Register) */
+form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+form input {
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+form button {
+  padding: 10px;
+  background-color: #007bff;
   color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.App-link {
-  color: #61dafb;
+form button:hover {
+  background-color: black;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Style for product list */
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+  gap: 20px;
+  
+}
+
+.product-item {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.product-item h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+/* Style for profile */
+.profile {
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  
+}
+
+.profile h2 {
+  margin-bottom: 15px;
+}
+
+/* Generic Button Style */
+button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Article style */
+.article {
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.article h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.article p {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Style for Title component, especially for list of articles */
+.title-articles {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center items horizontally */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+      width: 95%;
   }
-  to {
-    transform: rotate(360deg);
+  .product-list {
+      grid-template-columns: 1fr; /* Stack products on smaller screens */
+  }
+  nav ul {
+      flex-direction: column;
+      align-items: center; /* Center navigation items vertically */
+  }
+  nav li {
+      margin-bottom: 10px; /* Add spacing between navigation items */
   }
 }

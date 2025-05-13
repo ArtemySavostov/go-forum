@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  frontend:
+    build: ./frontend
+    ports: 
+      - "3000:3000"
+    depends_on: 
+      - gateway
+  gateway:
+    build: ./gateway
+    ports: 
+      - "8000:3000"
+    environment:
+      USERS_SERVICE_URL: "http://auth:8088"
+      ARTICLES_SERVICE_URL: "http://forum:8080"
+      CHAT_SERVICE_URL: "http://chat:8082"
+      MONGO_URI: "mongodb://mongodb:27017"
+    depends_on:
+       - forum
+       - auth
+       - chat
+       - mongodb 
+  forum:
+    build: ./forum/article
+    ports:
+      - "8080:8000"
+    environment:
+      MONGO_URI: "mongodb://mongodb:27017"
+      ALLOWED_ORIGINS: "http://frontend:3000"
+    depends_on:
+      - mongodb
+  auth:
+    build: ./JWT
+    ports:
+      - "8088:8000"
+    environment:
+      MONGO_URI: "mongodb://mongodb:27017"
+      ALLOWED_ORIGINS: "http://frontend:3000"
+    depends_on:
+      - mongodb
+  chat:
+    build: ./realtime-chat
+    ports:
+      - "8082:8082"
+      - "50051:50051"
+    environment:
+      REDIS_ADDR: "redis:6379"
+      AUTH_SERVICE_ADDR: "http://auth:8081"
+    depends_on:
+      - redis 
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+volumes:
+  mongodb_data:
+  redis_data:
+
+
+  

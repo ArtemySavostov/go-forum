@@ -18,14 +18,19 @@ type AuthUseCase interface {
 }
 
 type authUseCase struct {
-	userRepo repository.UserRepository
+	userRepo    repository.UserRepository
+	authService auth.AuthService
 }
 
-func NewAuthUseCase(userRepo repository.UserRepository) AuthUseCase {
-	return &authUseCase{userRepo: userRepo}
+func NewAuthUseCase(userRepo repository.UserRepository, authService auth.AuthService) AuthUseCase {
+	return &authUseCase{
+		userRepo:    userRepo,
+		authService: authService,
+	}
 }
 
 func (uc *authUseCase) Register(ctx context.Context, username, email, password string) (string, error) {
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", fmt.Errorf("could not hash password: %w", err)
@@ -42,7 +47,7 @@ func (uc *authUseCase) Register(ctx context.Context, username, email, password s
 		return "", fmt.Errorf("could not create user: %w", err)
 	}
 
-	token, err := auth.GenerateToken(username, user.ID.Hex())
+	token, err := uc.authService.GenerateToken(username, user.ID.Hex(), email)
 	if err != nil {
 		return "", fmt.Errorf("could not generate token: %w", err)
 	}
@@ -61,7 +66,7 @@ func (uc *authUseCase) Login(ctx context.Context, username, password string) (st
 		return "", errors.New("invalid credentials")
 	}
 
-	token, err := auth.GenerateToken(username, user.ID.Hex())
+	token, err := uc.authService.GenerateToken(username, user.ID.Hex(), user.Email)
 	if err != nil {
 		return "", fmt.Errorf("could not generate token: %w", err)
 	}
@@ -70,7 +75,7 @@ func (uc *authUseCase) Login(ctx context.Context, username, password string) (st
 }
 
 func (uc *authUseCase) ValidateToken(token string) (string, error) {
-	username, _, err := auth.ValidateToken(token)
+	username, err := uc.authService.ValidateToken(token)
 	if err != nil {
 		return "", fmt.Errorf("invalid token: %w", err)
 	}

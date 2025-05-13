@@ -28,7 +28,7 @@ func NewUserUseCase(userRepo repository.UserRepository) UserUseCase {
 }
 
 func (uc *userUseCase) GetUser(id primitive.ObjectID) (entity.User, error) {
-	return uc.userRepo.Get(context.Background(), id)
+	return uc.userRepo.GetUserById(context.Background(), id)
 }
 
 func (uc *userUseCase) CreateUser(username, email, password string) (entity.User, error) {

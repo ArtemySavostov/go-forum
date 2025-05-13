@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "realtime-chat/pkg/chat/proto";
+
+
+service AuthService {
+  rpc ValidateToken (ValidateTokenRequest) returns (ValidateTokenResponse) {}
+}
+
+message ValidateTokenRequest {
+  string token = 1;
+}
+
+message ValidateTokenResponse {
+  string user_id = 1;
+}
+
+
+
+message ChatMessage {
+  string id = 1;          
+  string channel = 2;     
+  string sender_id = 3;   
+  string text = 4;        
+  int64 timestamp = 5;   
+  MessageType type = 6;  
+}
+
+
+enum MessageType {
+  TEXT = 0;
+  JOIN = 1;
+  LEAVE = 2;
+  SYSTEM = 3;
+}
+
+
+
+service ChatService {
+
+  rpc SubscribeToChannel (SubscribeToChannelRequest) returns (stream ChatMessage) {}
+
+
+  rpc SendMessage (ChatMessage) returns (SendMessageResponse) {}
+
+
+  rpc CreateChannel (CreateChannelRequest) returns (CreateChannelResponse) {}
+}
+
+
+message SubscribeToChannelRequest {
+  string channel = 1; 
+  string user_id = 2; 
+}
+
+
+
+message SendMessageResponse {
+  bool success = 1;
+  string error = 2;   
+}
+
+
+
+message CreateChannelRequest {
+  string channel_name = 1; 
+  string creator_id = 2; 
+}
+
+
+
+message CreateChannelResponse {
+  string channel_id = 1;   
+  bool success = 2;
+  string error = 3;
+}
