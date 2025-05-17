@@ -94,7 +94,7 @@ type MockJWTAuthService struct {
 	mock.Mock
 }
 
-func (m *MockJWTAuthService) GenerateToken(username, userID, email string) (string, error) {
+func (m *MockJWTAuthService) GenerateToken(username, userID, email, role string) (string, error) {
 	args := m.Called(username, userID, email)
 	return args.String(0), args.Error(1)
 }

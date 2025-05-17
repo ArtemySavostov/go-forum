@@ -88,17 +88,6 @@ const Chat = ({ clientID, roomID }) => {
 
         connectWebSocket();
         fetchListByChannelMessages();
-        // const waitForWebSocket = () => {
-        //     if (socket.current && socket.current.readyState === WebSocket.OPEN) {
-        //         console.log("WebSocket is open, fetching messages...");
-        //         fetchListByChannelMessages();
-        //     } else {
-        //         console.log("WebSocket is not open yet, waiting...");
-        //         setTimeout(waitForWebSocket, 100);
-        //     }
-        // };
-
-        // waitForWebSocket();
 
         return () => {
             console.log("Closing WebSocket...");

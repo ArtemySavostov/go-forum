@@ -32,8 +32,16 @@ func NewRouter(articleHandler *handlers.ArticleHandler, commentHandler *handlers
 	protected.Use(AuthMiddleware())
 	{
 		protected.POST("/", articleHandler.CreateArticle)
-		protected.PUT("/:id", articleHandler.UpdateArticle)
-		protected.DELETE("/:id", articleHandler.DeleteArticle)
+		// protected.PUT("/:id", articleHandler.UpdateArticle)
+		// protected.DELETE("/:id", articleHandler.DeleteArticle)
+	}
+	admin := router.Group("/admin")
+	admin.Use(AuthMiddleware())
+	admin.Use(RoleMiddleware("admin"))
+
+	{
+		//admin.PUT("/:id", articleHandler.UpdateArticle)
+		admin.DELETE("/:id", articleHandler.DeleteArticle)
 	}
 
 	return router
@@ -118,15 +126,33 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
 
-		username, userID, err := auth.ValidateToken(tokenString)
+		username, userID, role, err := auth.ValidateToken(tokenString)
 		if err != nil {
 			log.Printf("Token validation failed: %v", err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			return
 		}
+		c.Set("role", role)
 		c.Set("username", username)
 
 		c.Set("userID", userID)
+		c.Next()
+	}
+}
+
+func RoleMiddleware(requiredRole string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role, exists := c.Get("role")
+		if !exists {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			return
+		}
+
+		if role != requiredRole {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
+			return
+		}
+
 		c.Next()
 	}
 }

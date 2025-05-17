@@ -30,7 +30,6 @@ func NewChatUsecase(hub *Hub, messageRepo repository.MessageRepository) ChatUsec
 	return &chatUsecase{hub: hub, messageRepo: messageRepo}
 }
 
-// ProcessMessage implements ChatUsecase.
 func (c *chatUsecase) ProcessMessage(userID string, message []byte) {
 	var incomingMessage IncomingMessage
 	err := json.Unmarshal(message, &incomingMessage)
@@ -66,13 +65,10 @@ func (c *chatUsecase) ProcessMessage(userID string, message []byte) {
 	fullMessage := []byte(fmt.Sprintf("%s: ", userID))
 	fullMessage = append(fullMessage, responseMessage...)
 
-	//c.hub.Broadcast <- fullMessage
-
 }
 
 func (c *chatUsecase) ListByChannel(channelID string) ([]entity.Message, error) {
 
-	fmt.Println("ListByChannel CALLED!!!!")
 	ctx := context.Background()
 	messages, err := c.messageRepo.ListByChannel(ctx, channelID)
 	if err != nil {

@@ -17,7 +17,7 @@ type MockAuthService struct {
 	mock.Mock
 }
 
-func (m *MockAuthService) GenerateToken(username, userID, email string) (string, error) {
+func (m *MockAuthService) GenerateToken(username, userID, email, role string) (string, error) {
 	args := m.Called(username, userID, email)
 	return args.String(0), args.Error(1)
 }
@@ -105,7 +105,6 @@ func TestAuthMiddleware(t *testing.T) {
 	}
 }
 
-// extractToken извлекает токен из заголовка Authorization
 func extractToken(authHeader string) string {
 	parts := strings.Split(authHeader, " ")
 	if len(parts) == 2 && strings.ToLower(parts[0]) == "bearer" {

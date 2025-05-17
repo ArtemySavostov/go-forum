@@ -60,7 +60,7 @@ func (h *Handler) HandleWebSocket(c *gin.Context) {
 	h.hub.Register <- client
 
 	go client.writePump()
-	go h.readPump(client) // Используем нашу функцию readPump
+	go h.readPump(client)
 
 	fmt.Println("Client connected")
 }
@@ -69,7 +69,7 @@ func (h *Handler) readPump(client *Client) {
 	defer func() {
 		h.hub.Unregister <- client
 		client.conn.Close()
-		log.Println("Client disconnected (readPump)") // Добавим логирование
+		log.Println("Client disconnected (readPump)")
 	}()
 
 	client.conn.SetReadLimit(maxMessageSize)
@@ -100,14 +100,14 @@ func (h *Handler) readPump(client *Client) {
 			log.Println("Received heartbeat message")
 			continue
 		}
-		// Генерируем ID сообщения и сохраняем в БД
+
 		err = h.chatUC.CreateMessage(&msg)
 		if err != nil {
 			log.Printf("Error creating message: %v", err)
 			continue
 		}
 		log.Printf("Received message: %+v", msg)
-		h.broadcastMessage(client, &msg) // Отправляем сообщение в broadcastMessage
+		h.broadcastMessage(client, &msg)
 	}
 }
 
@@ -115,39 +115,8 @@ type ResponseMessage struct {
 	Message string `json:"message"`
 }
 
-// func (h *Handler) readPump(client *Client) {
-// 	for {
-// 		messageType, p, err := client.conn.ReadMessage()
-// 		if err != nil {
-// 			log.Println("read:", err)
-// 			h.unregisterClient(client)
-// 			break
-// 		}
-
-// 		if messageType == websocket.TextMessage {
-// 			log.Printf("Received raw message: %s", p)
-// 			var msg *entity.Message
-// 			if err := json.Unmarshal(p, &msg); err != nil {
-// 				log.Printf("error unmarshaling message: %v", err)
-// 				continue
-// 			}
-
-// 			if msg.Type == "heartbeat" {
-// 				log.Println("Received heartbeat message")
-// 				continue
-// 			}
-
-// 			log.Printf("Received message: %+v", msg)
-// 			h.broadcastMessage(client, msg)
-// 		}
-// 	}
-
-// 	log.Println("Client disconnected")
-// }
-
 func (h *Handler) broadcastMessage(client *Client, message *entity.Message) {
 
-	//  Преобразуем структуру в JSON
 	jsonMessage, err := json.Marshal(message)
 	if err != nil {
 		log.Printf("Error marshaling JSON: %v", err)
@@ -164,14 +133,6 @@ func (h *Handler) broadcastMessage(client *Client, message *entity.Message) {
 			}
 		}
 	}
-}
-
-func generateID() string {
-	return fmt.Sprintf("%d", time.Now().UnixNano())
-}
-
-func (h *Handler) unregisterClient(client *Client) {
-	h.hub.Unregister <- client
 }
 
 func (h *Handler) ListMessagesByChannel(c *gin.Context) {

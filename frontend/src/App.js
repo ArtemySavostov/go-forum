@@ -70,6 +70,7 @@ const App = () => {
 
   const handleLoginSuccess = useCallback((token) => {
     localStorage.setItem('token', token);
+    
     try {
       const decodedToken = jwtDecode(token);
       setUserId(decodedToken.id);
@@ -116,8 +117,26 @@ const App = () => {
   
     const handleDeleteArticle = useCallback(async (articleId) => {
       try {
-        await apiRequest(`${API_URL}/${articleId}`, {
+        const token = localStorage.getItem('token');
+        console.log({ token }); // <--- Добавьте это
+         if (token) {
+          try {
+            const decodedToken = jwtDecode(token);
+            const isAdmin = decodedToken.role === 'admin';
+            console.log({isAdmin})
+            if(!isAdmin){
+                setError("You dont have admin rights")
+                return
+            }
+          } catch (error) {
+            console.error("Error decoding token:", error);
+          }
+        }
+        await apiRequest(`http://localhost:8080/admin/${articleId}`, {
           method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`, 
+          },
         });
         fetchProducts();
       } catch (error) {
@@ -145,7 +164,19 @@ const App = () => {
               <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login setIsLoggedIn={handleLoginSuccess} />} />
               <Route path="/register" element={isLoggedIn ? <Navigate to="/" /> : <Register setIsLoggedIn={handleLoginSuccess} />} />
               <Route path="/profile" element={isLoggedIn ? <Profile userId={userId} /> : <Navigate to="/login" />} />
-              <Route path="/products" element={<ProductList isLoggedIn={isLoggedIn} products={products} />} />
+              {/* <Route path="/products" element={<ProductList isLoggedIn={isLoggedIn} products={products} />} /> */}
+              <Route
+              path="/products"
+              element={
+                <ProductList
+                  isLoggedIn={isLoggedIn}
+                  products={products}
+                  onCreate={handleCreateArticle}
+                  onDelete={handleDeleteArticle} 
+                  API_URL={API_URL}
+                />
+              }
+            />
               {/* Add the new route for CreateArticle */}
               <Route path="/create" element={isLoggedIn ? <CreateArticle onCreate={handleCreateArticle} /> : <Navigate to="/login" />} />
               <Route path="/articles/:articleId" element={<ArticleDetail />} />

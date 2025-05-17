@@ -10,7 +10,6 @@ type Hub struct {
 	Broadcast  chan []byte
 	Register   chan *Client
 	Unregister chan *Client
-	//rooms      map[string]map[*Client]bool
 }
 
 func NewHub() *Hub {
@@ -19,7 +18,6 @@ func NewHub() *Hub {
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
 		Clients:    make(map[*Client]bool),
-		//rooms:      make(map[string]map[*Client]bool),
 	}
 }
 

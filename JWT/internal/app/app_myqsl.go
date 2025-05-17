@@ -49,15 +49,14 @@ func (r *MySQLUserRepository) Create(ctx context.Context, user *entity.User) err
 	user.ID = objectID
 	idString := objectID.Hex()
 
-	query := "INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)"
+	query := "INSERT INTO users (id, username, email, password, role) VALUES (?, ?, ?, ?, ?)"
 
-	_, err := r.db.ExecContext(ctx, query, idString, user.Username, user.Email, user.Password)
+	_, err := r.db.ExecContext(ctx, query, idString, user.Username, user.Email, user.Password, user.Role)
 	if err != nil {
 		log.Printf("failed to ExecContext: %v", err)
 		return fmt.Errorf("failed to create user: %w", err)
 	}
 
-	//user.ID = objectID
 	return nil
 }
 
@@ -106,8 +105,8 @@ func (r *MySQLUserRepository) Delete(ctx context.Context, id primitive.ObjectID)
 func (r *MySQLUserRepository) GetByUsername(ctx context.Context, username string) (entity.User, error) {
 	var user entity.User
 	var idString string
-	query := "SELECT id, username, email, password FROM users WHERE username = ?"
-	err := r.db.QueryRowContext(ctx, query, username).Scan(&idString, &user.Username, &user.Email, &user.Password)
+	query := "SELECT id, username, email, password, role FROM users WHERE username = ?"
+	err := r.db.QueryRowContext(ctx, query, username).Scan(&idString, &user.Username, &user.Email, &user.Password, &user.Role)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return entity.User{}, fmt.Errorf("user not found")

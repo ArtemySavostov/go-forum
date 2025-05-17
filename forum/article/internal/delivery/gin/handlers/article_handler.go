@@ -184,17 +184,17 @@ func (h *ArticleHandler) DeleteArticle(c *gin.Context) {
 		return
 	}
 
-	existingArticle, err := h.articleUC.GetArticleByID(context.Background(), articleID)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
-		return
-	}
-	if existingArticle.AuthorID != userID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
-		return
-	}
+	// existingArticle, err := h.articleUC.GetArticleByID(context.Background(), articleID)
+	// if err != nil {
+	// 	c.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
+	// 	return
+	// }
+	// if existingArticle.AuthorID != userID {
+	// 	c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
+	// 	return
+	// }
 
-	err = h.articleUC.DeleteArticle(context.Background(), articleID)
+	err := h.articleUC.DeleteArticle(context.Background(), articleID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete article"})
 		return

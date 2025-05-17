@@ -29,7 +29,7 @@ func NewJWTAuthService(secretKey string) *JWTAuthService {
 	}
 }
 
-func (s *JWTAuthService) GenerateToken(username string, userID string, email string) (string, error) {
+func (s *JWTAuthService) GenerateToken(username string, userID string, email string, role string) (string, error) {
 	loadEnv()
 
 	secretKey := os.Getenv("JWT_SECRET")
@@ -47,6 +47,7 @@ func (s *JWTAuthService) GenerateToken(username string, userID string, email str
 		"id":       userID,
 		"email":    email,
 		"exp":      time.Now().Add(tokenDuration).Unix(),
+		"role":     role,
 	})
 
 	tokenString, err := token.SignedString([]byte(secretKey))

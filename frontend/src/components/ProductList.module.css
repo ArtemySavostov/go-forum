@@ -39,17 +39,7 @@
     background-color: black;
 }
 
-.productItem {
-    display: flex;
-    justify-content:center;
-    align-content: center;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-    width: 10%;
-}
+
 
 .productLink {
     text-decoration: none;
@@ -196,15 +186,23 @@
     gap: 20px;
   }
   
-  .productItem {
-    background-color: #f0f0f0;
-    border-radius: 5px;
-    padding: 20px;
-    text-align: center;
-    height: 150px; /* Фиксированная высота */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .productItem {    
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ccc;
+        margin-bottom: 5px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        padding: 20px;
+        text-align: center;
+        height: 150px; 
+        width: 75%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        word-break: break-word; 
+        overflow: hidden; 
+      
   }
   
   .productLink {
@@ -232,19 +230,6 @@
   gap: 20px;
 }
 
-.productItem {
-    background-color: #f0f0f0;
-    border-radius: 5px;
-    padding: 20px;
-    text-align: center;
-    height: 150px; /* Фиксированная высота */
-    width: 75%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    word-break: break-word; /* Перенос слов, если они не помещаются */
-    overflow: hidden; /* Скрываем все, что выходит за границы */
-  }
   
   .productLink {
     text-decoration: none;
@@ -271,3 +256,33 @@
     justify-content: center;
     color: #333;
 }
+.deleteButtonContainer {
+    margin-top: 15px;
+    text-align: center;
+  }
+  .deleteButton {
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+  .productList {
+    display: flex;
+    flex-direction: column;
+  }
+  
+
+  
+  .productTitle {
+    font-size: 16px;
+  }
+  
+  .deleteButton {
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+  }

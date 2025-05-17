@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './CreateArticle.module.css'; // Создайте этот файл стилей, если его еще нет
+import styles from './CreateArticle.module.css'; 
 
 const CreateArticle = ({ onCreate }) => {
   const [newArticle, setNewArticle] = useState({ title: '', content: '' });
@@ -10,8 +10,8 @@ const CreateArticle = ({ onCreate }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    onCreate(newArticle); // Вызываем функцию onCreate, переданную из App.js
-    setNewArticle({ title: '', content: '' }); // Очищаем форму после отправки
+    onCreate(newArticle);
+    setNewArticle({ title: '', content: '' });
   };
 
   return (

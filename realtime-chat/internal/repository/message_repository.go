@@ -67,14 +67,14 @@ func (r *messageRepository) ListByChannel(ctx context.Context, channel string) (
 		messageJSON, err := r.rdb.Get(ctx, key).Result()
 		if err != nil {
 			log.Printf("failed to get message from Redis: %v", err)
-			continue // Skip this message and continue with the next
+			continue
 		}
 
 		var message entity.Message
 		err = json.Unmarshal([]byte(messageJSON), &message)
 		if err != nil {
 			log.Printf("failed to unmarshal message from JSON: %v", err)
-			continue // Skip this message and continue with the next
+			continue
 		}
 
 		messages = append(messages, message)

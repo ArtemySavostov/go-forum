@@ -45,6 +45,7 @@ func (uc *userUseCase) CreateUser(username, email, password string) (entity.User
 		Username: username,
 		Email:    email,
 		Password: string(hashedPassword),
+		Role:     "user",
 	}
 
 	err = uc.userRepo.Create(context.Background(), user)

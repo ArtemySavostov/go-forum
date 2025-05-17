@@ -1,0 +1,1428 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>migrate: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">JWT/cmd/migrate/main.go (0.0%)</option>
+				
+				<option value="file1">JWT/cmd/users/main.go (0.0%)</option>
+				
+				<option value="file2">JWT/docs/docs.go (0.0%)</option>
+				
+				<option value="file3">JWT/internal/app/app.go (0.0%)</option>
+				
+				<option value="file4">JWT/internal/app/app_myqsl.go (0.0%)</option>
+				
+				<option value="file5">JWT/internal/delivery/gin/handlers/auth_handler.go (100.0%)</option>
+				
+				<option value="file6">JWT/internal/delivery/gin/handlers/middleware.go (100.0%)</option>
+				
+				<option value="file7">JWT/internal/delivery/gin/handlers/user_handler.go (100.0%)</option>
+				
+				<option value="file8">JWT/internal/delivery/gin/router.go (0.0%)</option>
+				
+				<option value="file9">JWT/internal/usecase/auth_uc.go (0.0%)</option>
+				
+				<option value="file10">JWT/internal/usecase/user_uc.go (86.7%)</option>
+				
+				<option value="file11">JWT/migrations/0001_add_role_column.go (0.0%)</option>
+				
+				<option value="file12">JWT/migrations/0002_create_admin_user.go (0.0%)</option>
+				
+				<option value="file13">JWT/pkg/auth/auth.go (0.0%)</option>
+				
+				<option value="file14">JWT/pkg/database/migrations.go (0.0%)</option>
+				
+				<option value="file15">JWT/pkg/database/mysql.go (81.8%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "flag"
+        "fmt"
+        "log"
+        "os"
+
+        "JWT/pkg/database"
+
+        "github.com/joho/godotenv"
+)
+
+func main() <span class="cov0" title="0">{
+        var (
+                migrateUp   = flag.Bool("up", false, "Run migrations up")
+                migrateDown = flag.Bool("down", false, "Run migrations down (rollback)")
+        )
+        flag.Parse()
+
+        if err := godotenv.Load(); err != nil </span><span class="cov0" title="0">{
+                log.Println("No .env file found")
+        }</span>
+
+        <span class="cov0" title="0">mysqlPass := os.Getenv("MYSQL_PASSWORD")
+        if mysqlPass == "" </span><span class="cov0" title="0">{
+                mysqlPass = "admin"
+        }</span>
+
+        <span class="cov0" title="0">cfg := database.MySQLConfig{
+                Host:     "localhost",
+                Port:     3306,
+                User:     "root",
+                Password: mysqlPass,
+                Database: "forum_db",
+        }
+
+        db, err := database.ConnectMySQL(cfg)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Failed to connect to MySQL: %v", err)
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        if *migrateUp </span><span class="cov0" title="0">{
+                fmt.Println("Running migrations up...")
+                database.RunMigrations(db)
+                fmt.Println("Migrations completed.")
+        }</span> else<span class="cov0" title="0"> if *migrateDown </span><span class="cov0" title="0">{
+                fmt.Println("Rolling back migrations...")
+                database.RollbackMigrations(db)
+                fmt.Println("Rollback completed.")
+        }</span> else<span class="cov0" title="0"> {
+                fmt.Println("Usage: migrate -up | -down")
+                os.Exit(1)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+import (
+        "fmt"
+        "log"
+        "net/http"
+        "os"
+        "strings"
+
+        "JWT/internal/app"
+        "JWT/internal/delivery/gin"
+        "JWT/internal/delivery/gin/handlers"
+        "JWT/internal/usecase"
+        "JWT/pkg/auth"
+        "JWT/pkg/database"
+
+        "github.com/joho/godotenv"
+        "github.com/rs/cors"
+
+        _ "JWT/docs"
+)
+
+// @title User service
+// @version 1.0
+// @description AuthServer
+
+// @host localhost:8088
+// @BasePath /
+
+// @securityDefinitions.basic BasicAuth
+
+func main() <span class="cov0" title="0">{
+        if err := godotenv.Load(); err != nil </span><span class="cov0" title="0">{
+                log.Println("No .env file found")
+        }</span>
+
+        <span class="cov0" title="0">mysqlPass := os.Getenv("MYSQL_PASSWORD")
+        if mysqlPass == "" </span><span class="cov0" title="0">{
+                mysqlPass = "admin"
+        }</span>
+
+        <span class="cov0" title="0">cfg := database.MySQLConfig{
+                Host:     "localhost",
+                Port:     3306,
+                User:     "root",
+                Password: mysqlPass,
+                Database: "forum_db",
+        }
+
+        db, err := database.ConnectMySQL(cfg)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Failed to connect to MySQL: %v", err)
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        fmt.Println("Successfully connected to MySQL!")
+        userRepo := app.NewMySQLUserRepository(db)
+
+        // mongoURI := os.Getenv("MONGO_URI")
+        // if mongoURI == "" {
+        //         log.Fatal("MONGO_URI environment variable not set")
+        // }
+
+        // client, err := database.ConnectMongoDB(context.Background(), mongoURI)
+        // if err != nil {
+        //         log.Fatalf("Error connecting to MongoDB: %v", err)
+        // }
+        // defer func() {
+        //         if err := client.Disconnect(context.Background()); err != nil {
+        //                 log.Fatalf("Error disconnecting from MongoDB: %v", err)
+        //         }
+        // }()
+        jwtSecretKey := os.Getenv("JWT_SECRET")
+        //userRepo := app.NewMongoDBUserRepository(client.Database("forum_db").Collection("users"))
+        authService := auth.NewJWTAuthService(jwtSecretKey)
+        userUC := usecase.NewUserUseCase(userRepo)
+        authUC := usecase.NewAuthUseCase(userRepo, authService)
+        userHandler := handlers.NewUserHandler(userUC)
+        authHandler := handlers.NewAuthHandler(authUC)
+        allowedOriginsStr := os.Getenv("ALLOWED_ORIGINS")
+        allowedOrigins := strings.Split(allowedOriginsStr, ",")
+
+        router := gin.SetupRouter(authHandler, userHandler, authService)
+
+        // router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+        c := cors.New(cors.Options{
+                AllowedOrigins:   allowedOrigins,
+                AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+                AllowedHeaders:   []string{"Content-Type", "Authorization"},
+                AllowCredentials: true,
+        })
+        handler := c.Handler(router)
+
+        port := os.Getenv("PORT")
+        if port == "" </span><span class="cov0" title="0">{
+                port = "8088"
+        }</span>
+        <span class="cov0" title="0">fmt.Printf("Server is running on port %s...\n", port)
+        log.Fatal(http.ListenAndServe(":"+port, handler))</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">// Package docs Code generated by swaggo/swag. DO NOT EDIT
+package docs
+
+import "github.com/swaggo/swag"
+
+const docTemplate = `{
+    "schemes": {{ marshal .Schemes }},
+    "swagger": "2.0",
+    "info": {
+        "description": "{{escape .Description}}",
+        "title": "{{.Title}}",
+        "contact": {},
+        "version": "{{.Version}}"
+    },
+    "host": "{{.Host}}",
+    "basePath": "{{.BasePath}}",
+    "paths": {
+        "/login": {
+            "post": {
+                "description": "Login user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "login"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Login request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully login user",
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/models.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Status Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "Registers a new user and returns a JWT token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "register"
+                ],
+                "summary": "registr a new user",
+                "parameters": [
+                    {
+                        "description": "Registration request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully registered user",
+                        "schema": {
+                            "$ref": "#/definitions/models.RegisterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/models.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/models.HTTPError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Invalid request body"
+                }
+            }
+        },
+        "models.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "john_doe"
+                }
+            }
+        },
+        "models.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                }
+            }
+        },
+        "models.RegisterRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "john.doe@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "john_doe"
+                }
+            }
+        },
+        "models.RegisterResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                }
+            }
+        },
+        "models.ServerError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Internal Server Error"
+                }
+            }
+        },
+        "models.StatusUnauthorized": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 401
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Status Unauthorized"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}`
+
+// SwaggerInfo holds exported Swagger Info so clients can modify it
+var SwaggerInfo = &amp;swag.Spec{
+        Version:          "1.0",
+        Host:             "localhost:8088",
+        BasePath:         "/",
+        Schemes:          []string{},
+        Title:            "User service",
+        Description:      "AuthServer",
+        InfoInstanceName: "swagger",
+        SwaggerTemplate:  docTemplate,
+        LeftDelim:        "{{",
+        RightDelim:       "}}",
+}
+
+func init() <span class="cov0" title="0">{
+        swag.Register(SwaggerInfo.InstanceName(), SwaggerInfo)
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package app
+
+import (
+        "context"
+        "fmt"
+        "log"
+
+        "JWT/internal/entity"
+        "JWT/internal/repository"
+        "time"
+
+        "errors"
+
+        "go.mongodb.org/mongo-driver/bson"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+        "go.mongodb.org/mongo-driver/mongo"
+)
+
+type MongoDBUserRepository struct {
+        collection *mongo.Collection
+}
+
+func NewMongoDBUserRepository(collection *mongo.Collection) repository.UserRepository <span class="cov0" title="0">{
+        return &amp;MongoDBUserRepository{collection: collection}
+}</span>
+
+func (r *MongoDBUserRepository) GetUserById(ctx context.Context, id primitive.ObjectID) (entity.User, error) <span class="cov0" title="0">{
+        var user entity.User
+        err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&amp;user)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, mongo.ErrNoDocuments) </span><span class="cov0" title="0">{
+                        return entity.User{}, fmt.Errorf("user not found")
+                }</span>
+                <span class="cov0" title="0">log.Printf("failed to FindOne on db: %v", err)
+                return entity.User{}, fmt.Errorf("failed to get user: %w", err)</span>
+        }
+
+        <span class="cov0" title="0">return user, nil</span>
+}
+
+func (r *MongoDBUserRepository) Create(ctx context.Context, user *entity.User) error <span class="cov0" title="0">{
+        ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+        defer cancel()
+
+        _, err := r.collection.InsertOne(ctx, user)
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("failed to InsertOne on db: %v", err)
+                return fmt.Errorf("failed to create user: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (r *MongoDBUserRepository) Update(ctx context.Context, user entity.User) error <span class="cov0" title="0">{
+        // todo: Implement the function update user
+        return nil
+}</span>
+
+func (r *MongoDBUserRepository) Delete(ctx context.Context, id primitive.ObjectID) error <span class="cov0" title="0">{
+        // todo: Implement the function delete user
+        return nil
+}</span>
+
+func (r *MongoDBUserRepository) GetByUsername(ctx context.Context, username string) (entity.User, error) <span class="cov0" title="0">{
+        var user entity.User
+        err := r.collection.FindOne(ctx, bson.M{"username": username}).Decode(&amp;user)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, mongo.ErrNoDocuments) </span><span class="cov0" title="0">{
+                        return entity.User{}, fmt.Errorf("user not found")
+                }</span>
+                <span class="cov0" title="0">return entity.User{}, fmt.Errorf("failed to get user by username: %w", err)</span>
+        }
+
+        <span class="cov0" title="0">return user, nil</span>
+}
+func (r *MongoDBUserRepository) GetByEmail(ctx context.Context, email string) (entity.User, error) <span class="cov0" title="0">{
+        var user entity.User
+        err := r.collection.FindOne(ctx, bson.M{"email": email}).Decode(&amp;user)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, mongo.ErrNoDocuments) </span><span class="cov0" title="0">{
+                        return entity.User{}, fmt.Errorf("user not found")
+                }</span>
+                <span class="cov0" title="0">return entity.User{}, fmt.Errorf("failed to get user by email: %w", err)</span>
+        }
+        <span class="cov0" title="0">return user, nil</span>
+}
+
+func (r *MongoDBUserRepository) GetAll(ctx context.Context) ([]entity.User, error) <span class="cov0" title="0">{
+        return nil, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package app
+
+import (
+        "JWT/internal/entity"
+        "JWT/internal/repository"
+        "context"
+        "database/sql"
+        "errors"
+        "fmt"
+        "log"
+
+        "go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+type MySQLUserRepository struct {
+        db *sql.DB
+}
+
+func NewMySQLUserRepository(db *sql.DB) repository.UserRepository <span class="cov0" title="0">{
+        return &amp;MySQLUserRepository{db: db}
+}</span>
+
+func (r *MySQLUserRepository) GetUserById(ctx context.Context, id primitive.ObjectID) (entity.User, error) <span class="cov0" title="0">{
+        var user entity.User
+        var idStr string
+        idHex := id.Hex()
+        query := "SELECT id, username, email, password FROM users WHERE id = ?"
+        err := r.db.QueryRowContext(ctx, query, idHex).Scan(&amp;idStr, &amp;user.Username, &amp;user.Email, &amp;user.Password)
+
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, sql.ErrNoRows) </span><span class="cov0" title="0">{
+                        return entity.User{}, fmt.Errorf("user not found")
+                }</span>
+                <span class="cov0" title="0">log.Printf("failed to QueryRowContext: %v", err)
+                return entity.User{}, fmt.Errorf("failed to get user: %w", err)</span>
+        }
+        <span class="cov0" title="0">user.ID, err = primitive.ObjectIDFromHex(idStr)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("failed to convert hex to ObjectID: %v", err)
+                return entity.User{}, fmt.Errorf("failed to convert hex to ObjectID: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return user, nil</span>
+}
+func (r *MySQLUserRepository) Create(ctx context.Context, user *entity.User) error <span class="cov0" title="0">{
+
+        objectID := primitive.NewObjectID()
+
+        user.ID = objectID
+        idString := objectID.Hex()
+
+        query := "INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)"
+
+        _, err := r.db.ExecContext(ctx, query, idString, user.Username, user.Email, user.Password)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("failed to ExecContext: %v", err)
+                return fmt.Errorf("failed to create user: %w", err)
+        }</span>
+
+        //user.ID = objectID
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (r *MySQLUserRepository) Update(ctx context.Context, user entity.User) error <span class="cov0" title="0">{
+        query := "UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?"
+        result, err := r.db.ExecContext(ctx, query, user.Username, user.Email, user.Password, user.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("failed to ExecContext: %v", err)
+                return fmt.Errorf("failed to update user: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">rowsAffected, err := result.RowsAffected()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("failed to get rows affected: %v", err)
+                return fmt.Errorf("failed to get rows affected: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">if rowsAffected == 0 </span><span class="cov0" title="0">{
+                return fmt.Errorf("user not found or no changes applied")
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (r *MySQLUserRepository) Delete(ctx context.Context, id primitive.ObjectID) error <span class="cov0" title="0">{
+        query := "DELETE FROM users WHERE id = ?"
+        result, err := r.db.ExecContext(ctx, query, id)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("failed to ExecContext: %v", err)
+                return fmt.Errorf("failed to delete user: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">rowsAffected, err := result.RowsAffected()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("failed to get rows affected: %v", err)
+                return fmt.Errorf("failed to get rows affected: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">if rowsAffected == 0 </span><span class="cov0" title="0">{
+                return fmt.Errorf("user not found")
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (r *MySQLUserRepository) GetByUsername(ctx context.Context, username string) (entity.User, error) <span class="cov0" title="0">{
+        var user entity.User
+        var idString string
+        query := "SELECT id, username, email, password FROM users WHERE username = ?"
+        err := r.db.QueryRowContext(ctx, query, username).Scan(&amp;idString, &amp;user.Username, &amp;user.Email, &amp;user.Password)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, sql.ErrNoRows) </span><span class="cov0" title="0">{
+                        return entity.User{}, fmt.Errorf("user not found")
+                }</span>
+                <span class="cov0" title="0">log.Printf("failed to QueryRowContext: %v", err)
+                return entity.User{}, fmt.Errorf("failed to get user by username: %w", err)</span>
+        }
+        <span class="cov0" title="0">objectID, err := primitive.ObjectIDFromHex(idString)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("failed to convert id from string to ObjectID: %v", err)
+                return entity.User{}, fmt.Errorf("failed to convert id to ObjectID: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">user.ID = objectID
+        return user, nil</span>
+}
+
+func (r *MySQLUserRepository) GetByEmail(ctx context.Context, email string) (entity.User, error) <span class="cov0" title="0">{
+        var user entity.User
+        query := "SELECT id, username, email, password FROM users WHERE email = ?"
+        err := r.db.QueryRowContext(ctx, query, email).Scan(&amp;user.ID, &amp;user.Username, &amp;user.Email, &amp;user.Password)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, sql.ErrNoRows) </span><span class="cov0" title="0">{
+                        return entity.User{}, fmt.Errorf("user not found")
+                }</span>
+                <span class="cov0" title="0">log.Printf("failed to QueryRowContext: %v", err)
+                return entity.User{}, fmt.Errorf("failed to get user by email: %w", err)</span>
+        }
+        <span class="cov0" title="0">return user, nil</span>
+}
+
+func (r *MySQLUserRepository) GetAll(ctx context.Context) ([]entity.User, error) <span class="cov0" title="0">{
+        return nil, fmt.Errorf("GetAll not implemented")
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package handlers
+
+import (
+        "context"
+
+        "net/http"
+
+        "JWT/internal/usecase"
+        _ "JWT/models"
+
+        "github.com/gin-gonic/gin"
+)
+
+type AuthHandler struct {
+        authUC usecase.AuthUseCase
+}
+
+func NewAuthHandler(authUC usecase.AuthUseCase) *AuthHandler <span class="cov8" title="1">{
+        return &amp;AuthHandler{authUC: authUC}
+}</span>
+
+// @Summary registr a new user
+// @Description Registers a new user and returns a JWT token.
+// @Tags register
+// @Accept json
+// @Produce json
+// @Param request body models.RegisterRequest true "Registration request body"
+// @Success 201 {object} models.RegisterResponse "Successfully registered user"
+// @Failure 400 {object} models.HTTPError "Invalid request body"
+// @Failure 500 {object} models.HTTPError "Internal server error"
+// @Router /register [post]
+func (h *AuthHandler) Register(c *gin.Context) <span class="cov8" title="1">{
+        var req struct {
+                Username string `json:"username" binding:"required"`
+                Email    string `json:"email" binding:"required"`
+                Password string `json:"password" binding:"required"`
+        }
+
+        if err := c.BindJSON(&amp;req); err != nil </span><span class="cov8" title="1">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">token, err := h.authUC.Register(context.Background(), req.Username, req.Email, req.Password)
+        if err != nil </span><span class="cov8" title="1">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.JSON(http.StatusCreated, gin.H{"token": token})</span>
+}
+
+// @Summary Login
+// @Description Login user
+// @Tags login
+// @Accept json
+// @Produce json
+// @Param request body models.LoginRequest true "Login request body"
+// @Success 201 {object} models.LoginResponse "Successfully login user"
+// @Failure 400 {object} models.HTTPError "Invalid request body"
+// @Failure 401 {object} models.StatusUnauthorized "Status Unauthorized"
+// @Failure 500 {object} models.ServerError "Internal server error"
+// @Router /login [post]
+func (h *AuthHandler) Login(c *gin.Context) <span class="cov8" title="1">{
+        var req struct {
+                Username string `json:"username"`
+                Password string `json:"password"`
+        }
+
+        if err := c.BindJSON(&amp;req); err != nil </span><span class="cov8" title="1">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">token, err := h.authUC.Login(context.Background(), req.Username, req.Password)
+        if err != nil </span><span class="cov8" title="1">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.JSON(http.StatusOK, gin.H{"token": token})</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package handlers
+
+import (
+        "log"
+        "net/http"
+        "strings"
+
+        "JWT/pkg/auth"
+
+        "github.com/gin-gonic/gin"
+)
+
+func AuthMiddleware(authService auth.AuthService) gin.HandlerFunc <span class="cov8" title="1">{
+        return func(c *gin.Context) </span><span class="cov8" title="1">{
+                authHeader := c.GetHeader("Authorization")
+                if authHeader == "" </span><span class="cov8" title="1">{
+                        c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "authorization header required"})
+                        return
+                }</span>
+
+                <span class="cov8" title="1">parts := strings.Split(authHeader, " ")
+                if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" </span><span class="cov8" title="1">{
+                        c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid authorization header format"})
+                        return
+                }</span>
+
+                <span class="cov8" title="1">token := parts[1]
+                userID, err := authService.ValidateToken(token)
+                if err != nil </span><span class="cov8" title="1">{
+                        log.Printf("Invalid token: %v", err)
+                        c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+                        return
+                }</span>
+                <span class="cov8" title="1">log.Printf("Username from token: %s", userID)
+
+                c.Set("userID", userID)
+
+                c.Next()</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package handlers
+
+import (
+        "net/http"
+
+        "JWT/internal/usecase"
+
+        "github.com/gin-gonic/gin"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+type UserHandler struct {
+        userUC usecase.UserUseCase
+}
+
+func NewUserHandler(userUC usecase.UserUseCase) *UserHandler <span class="cov8" title="1">{
+        return &amp;UserHandler{userUC: userUC}
+}</span>
+
+func (h *UserHandler) GetUser(c *gin.Context) <span class="cov8" title="1">{
+        idStr := c.Param("id")
+
+        id, err := primitive.ObjectIDFromHex(idStr)
+        if err != nil </span><span class="cov8" title="1">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user ID"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">user, err := h.userUC.GetUser(id)
+        if err != nil </span><span class="cov8" title="1">{
+                c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.JSON(http.StatusOK, user)</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package gin
+
+import (
+        "JWT/internal/delivery/gin/handlers"
+        "JWT/pkg/auth"
+        "log"
+        "net/http"
+        "strings"
+
+        _ "JWT/docs"
+
+        "github.com/gin-gonic/gin"
+        swaggerFiles "github.com/swaggo/files"
+        ginSwagger "github.com/swaggo/gin-swagger"
+)
+
+func SetupRouter(authHandler *handlers.AuthHandler, userHandler *handlers.UserHandler, authService auth.AuthService) *gin.Engine <span class="cov0" title="0">{
+        r := gin.Default()
+
+        r.POST("/register", authHandler.Register)
+        r.POST("/login", authHandler.Login)
+
+        r.GET("/users/:id", AuthMiddleware(authService), userHandler.GetUser)
+        r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+        return r
+}</span>
+
+func AuthMiddleware(authService auth.AuthService) gin.HandlerFunc <span class="cov0" title="0">{
+        return func(c *gin.Context) </span><span class="cov0" title="0">{
+                authHeader := c.GetHeader("Authorization")
+                if authHeader == "" </span><span class="cov0" title="0">{
+                        c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "authorization header required"})
+                        return
+                }</span>
+
+                <span class="cov0" title="0">parts := strings.Split(authHeader, " ")
+                if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" </span><span class="cov0" title="0">{
+                        c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid authorization header format"})
+                        return
+                }</span>
+
+                <span class="cov0" title="0">token := parts[1]
+                userID, err := authService.ValidateToken(token)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Printf("Invalid token: %v", err)
+                        c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+                        return
+                }</span>
+                <span class="cov0" title="0">log.Printf("Username from token: %s", userID)
+
+                c.Set("userID", userID)
+
+                c.Next()</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package usecase
+
+import (
+        "JWT/internal/entity"
+        "JWT/internal/repository"
+        "JWT/pkg/auth"
+        "context"
+        "errors"
+        "fmt"
+
+        "golang.org/x/crypto/bcrypt"
+)
+
+type AuthUseCase interface {
+        Register(ctx context.Context, username, email, password string) (string, error)
+        Login(ctx context.Context, username, password string) (string, error)
+        ValidateToken(token string) (string, error)
+}
+
+type authUseCase struct {
+        userRepo    repository.UserRepository
+        authService auth.AuthService
+}
+
+func NewAuthUseCase(userRepo repository.UserRepository, authService auth.AuthService) AuthUseCase <span class="cov0" title="0">{
+        return &amp;authUseCase{
+                userRepo:    userRepo,
+                authService: authService,
+        }
+}</span>
+
+func (uc *authUseCase) Register(ctx context.Context, username, email, password string) (string, error) <span class="cov0" title="0">{
+
+        hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("could not hash password: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">user := &amp;entity.User{
+                Username: username,
+                Email:    email,
+                Password: string(hashedPassword),
+        }
+
+        err = uc.userRepo.Create(ctx, user)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("could not create user: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">token, err := uc.authService.GenerateToken(username, user.ID.Hex(), email)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("could not generate token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return token, nil</span>
+}
+
+func (uc *authUseCase) Login(ctx context.Context, username, password string) (string, error) <span class="cov0" title="0">{
+        user, err := uc.userRepo.GetByUsername(ctx, username)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("could not get user: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+        if err != nil </span><span class="cov0" title="0">{
+                return "", errors.New("invalid credentials")
+        }</span>
+
+        <span class="cov0" title="0">token, err := uc.authService.GenerateToken(username, user.ID.Hex(), user.Email)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("could not generate token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return token, nil</span>
+}
+
+func (uc *authUseCase) ValidateToken(token string) (string, error) <span class="cov0" title="0">{
+        username, err := uc.authService.ValidateToken(token)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("invalid token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return username, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package usecase
+
+import (
+        "JWT/internal/entity"
+        "JWT/internal/repository"
+        "context"
+        "errors"
+        "fmt"
+
+        "go.mongodb.org/mongo-driver/bson/primitive"
+        "golang.org/x/crypto/bcrypt"
+)
+
+type UserUseCase interface {
+        GetUser(id primitive.ObjectID) (entity.User, error)
+        CreateUser(username, email, password string) (entity.User, error)
+        UpdateUser(user entity.User) error
+        DeleteUser(id primitive.ObjectID) error
+        GetAllUsers() ([]entity.User, error)
+}
+
+type userUseCase struct {
+        userRepo repository.UserRepository
+}
+
+func NewUserUseCase(userRepo repository.UserRepository) UserUseCase <span class="cov8" title="1">{
+        return &amp;userUseCase{userRepo: userRepo}
+}</span>
+
+func (uc *userUseCase) GetUser(id primitive.ObjectID) (entity.User, error) <span class="cov8" title="1">{
+        return uc.userRepo.GetUserById(context.Background(), id)
+}</span>
+
+func (uc *userUseCase) CreateUser(username, email, password string) (entity.User, error) <span class="cov8" title="1">{
+        if username == "" || email == "" || password == "" </span><span class="cov8" title="1">{
+                return entity.User{}, errors.New("username, email, and password are required")
+        }</span>
+
+        <span class="cov8" title="1">hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov0" title="0">{
+                return entity.User{}, fmt.Errorf("could not hash password: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">user := &amp;entity.User{
+                Username: username,
+                Email:    email,
+                Password: string(hashedPassword),
+        }
+
+        err = uc.userRepo.Create(context.Background(), user)
+        if err != nil </span><span class="cov0" title="0">{
+                return entity.User{}, fmt.Errorf("could not create user: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return *user, nil</span>
+}
+
+func (uc *userUseCase) UpdateUser(user entity.User) error <span class="cov8" title="1">{
+        return uc.userRepo.Update(context.Background(), user)
+}</span>
+
+func (uc *userUseCase) DeleteUser(id primitive.ObjectID) error <span class="cov8" title="1">{
+        return uc.userRepo.Delete(context.Background(), id)
+}</span>
+
+func (uc *userUseCase) GetAllUsers() ([]entity.User, error) <span class="cov8" title="1">{
+        return uc.userRepo.GetAll(context.Background())
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package migrations
+
+import (
+        "database/sql"
+        "log"
+)
+
+func Up_0001(db *sql.DB) error <span class="cov0" title="0">{
+
+        alterIDQuery := `
+  ALTER TABLE users
+  MODIFY COLUMN id VARCHAR(36) NOT NULL;
+ `
+
+        _, err := db.Exec(alterIDQuery)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("Error altering id column: %v", err)
+                return err
+        }</span>
+
+        <span class="cov0" title="0">query := `
+  ALTER TABLE users
+  ADD COLUMN role ENUM('user', 'admin') NOT NULL DEFAULT 'user';
+ `
+
+        _, err = db.Exec(query)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("Error executing migration 0001 Up (adding role): %v", err)
+                return err
+        }</span>
+
+        <span class="cov0" title="0">log.Println("Migration 0001 Up executed successfully")
+        return nil</span>
+}
+
+func Down_0001(db *sql.DB) error <span class="cov0" title="0">{
+        query := `
+  ALTER TABLE users
+  DROP COLUMN role;
+ `
+
+        _, err := db.Exec(query)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("Error executing migration 0001 Down (dropping role): %v", err)
+                return err
+        }</span>
+
+        <span class="cov0" title="0">alterIDQuery := `
+  ALTER TABLE users
+  MODIFY COLUMN id VARCHAR(24) NOT NULL;
+ `
+        _, err = db.Exec(alterIDQuery)
+
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("Error altering id column back: %v", err)
+                return err
+        }</span>
+
+        <span class="cov0" title="0">log.Println("Migration 0001 Down executed successfully")
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package migrations
+
+import (
+        "database/sql"
+        "log"
+
+        "github.com/google/uuid"
+        "golang.org/x/crypto/bcrypt"
+)
+
+// Замените этими значениями
+const (
+        AdminUsername = "admin"
+        AdminEmail    = "admin@y.ru"
+        AdminPassword = "admin"
+)
+
+func Up_0002(db *sql.DB) error <span class="cov0" title="0">{
+        hashedPassword, err := bcrypt.GenerateFromPassword([]byte(AdminPassword), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("Error hashing admin password: %v", err)
+                return err
+        }</span>
+
+        <span class="cov0" title="0">query := `
+  INSERT INTO users (id, username, email, password, role)
+  VALUES (?, ?, ?, ?, 'admin')
+ `
+        id := uuid.New().String()
+
+        _, err = db.Exec(query, id, AdminUsername, AdminEmail, hashedPassword)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("Error creating admin user: %v", err)
+                return err
+        }</span>
+
+        <span class="cov0" title="0">log.Println("Migration 0002 Up executed successfully: Admin user created")
+        return nil</span>
+}
+
+func Down_0002(db *sql.DB) error <span class="cov0" title="0">{
+        query := `
+  DELETE FROM users WHERE email = ?
+ `
+
+        _, err := db.Exec(query, AdminEmail)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("Error deleting admin user: %v", err)
+                return err
+        }</span>
+
+        <span class="cov0" title="0">log.Println("Migration 0002 Down executed successfully: Admin user deleted")
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package auth
+
+import (
+        "errors"
+        "fmt"
+        "log"
+        "os"
+        "time"
+
+        "github.com/golang-jwt/jwt/v5"
+        "github.com/joho/godotenv"
+)
+
+var ErrInvalidToken = errors.New("invalid token")
+
+func loadEnv() <span class="cov0" title="0">{
+        if err := godotenv.Load(); err != nil </span><span class="cov0" title="0">{
+                log.Println("No .env file found")
+        }</span>
+}
+
+type JWTAuthService struct {
+        SecretKey string
+}
+
+func NewJWTAuthService(secretKey string) *JWTAuthService <span class="cov0" title="0">{
+        return &amp;JWTAuthService{
+                SecretKey: secretKey,
+        }
+}</span>
+
+func (s *JWTAuthService) GenerateToken(username string, userID string, email string) (string, error) <span class="cov0" title="0">{
+        loadEnv()
+
+        secretKey := os.Getenv("JWT_SECRET")
+        if secretKey == "" </span><span class="cov0" title="0">{
+                secretKey = s.SecretKey
+        }</span>
+
+        <span class="cov0" title="0">tokenDuration, err := time.ParseDuration(os.Getenv("JWT_DURATION"))
+        if err != nil </span><span class="cov0" title="0">{
+                tokenDuration = time.Hour * 24
+        }</span>
+
+        <span class="cov0" title="0">token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+                "username": username,
+                "id":       userID,
+                "email":    email,
+                "exp":      time.Now().Add(tokenDuration).Unix(),
+        })
+
+        tokenString, err := token.SignedString([]byte(secretKey))
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("couldn't sign token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return tokenString, nil</span>
+}
+
+func (s *JWTAuthService) ValidateToken(tokenString string) (string, error) <span class="cov0" title="0">{
+
+        loadEnv()
+
+        secretKey := os.Getenv("JWT_SECRET")
+        if secretKey == "" </span><span class="cov0" title="0">{
+                secretKey = s.SecretKey
+        }</span>
+
+        <span class="cov0" title="0">token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) </span><span class="cov0" title="0">{
+                if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+                }</span>
+
+                <span class="cov0" title="0">return []byte(secretKey), nil</span>
+        })
+
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("couldn't parse token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">claims, ok := token.Claims.(jwt.MapClaims)
+        if !ok || !token.Valid </span><span class="cov0" title="0">{
+                return "", ErrInvalidToken
+
+        }</span>
+
+        <span class="cov0" title="0">userID, ok := claims["id"].(string)
+        if !ok </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("invalid user ID claim")
+        }</span>
+
+        <span class="cov0" title="0">return userID, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package database
+
+import (
+        "database/sql"
+        "log"
+
+        "JWT/migrations"
+)
+
+func RunMigrations(db *sql.DB) <span class="cov0" title="0">{
+        err := migrations.Up_0001(db)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Error running migration 0001: %v", err)
+        }</span>
+
+        <span class="cov0" title="0">err = migrations.Up_0002(db)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Error running migration 0002: %v", err)
+        }</span>
+}
+
+func RollbackMigrations(db *sql.DB) <span class="cov0" title="0">{
+        err := migrations.Down_0002(db)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("Error rolling back migration 0002: %v", err)
+        }</span>
+
+        <span class="cov0" title="0">err = migrations.Down_0001(db)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("Error rolling back migration 0001: %v", err)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package database
+
+import (
+        "database/sql"
+        "fmt"
+        "time"
+
+        _ "github.com/go-sql-driver/mysql"
+)
+
+type MySQLConfig struct {
+        Host     string
+        Port     int
+        User     string
+        Password string
+        Database string
+}
+
+func ConnectMySQL(cfg MySQLConfig) (*sql.DB, error) <span class="cov8" title="1">{
+
+        connectionString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
+                cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Database)
+
+        db, err := sql.Open("mysql", connectionString)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to open database connection: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">db.SetMaxOpenConns(10)
+        db.SetMaxIdleConns(5)
+        db.SetConnMaxLifetime(time.Hour)
+
+        err = db.Ping()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to ping database: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return db, nil</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

@@ -40,6 +40,7 @@ func (uc *authUseCase) Register(ctx context.Context, username, email, password s
 		Username: username,
 		Email:    email,
 		Password: string(hashedPassword),
+		Role:     "user",
 	}
 
 	err = uc.userRepo.Create(ctx, user)
@@ -47,7 +48,7 @@ func (uc *authUseCase) Register(ctx context.Context, username, email, password s
 		return "", fmt.Errorf("could not create user: %w", err)
 	}
 
-	token, err := uc.authService.GenerateToken(username, user.ID.Hex(), email)
+	token, err := uc.authService.GenerateToken(username, user.ID.Hex(), email, user.Role)
 	if err != nil {
 		return "", fmt.Errorf("could not generate token: %w", err)
 	}
@@ -66,7 +67,7 @@ func (uc *authUseCase) Login(ctx context.Context, username, password string) (st
 		return "", errors.New("invalid credentials")
 	}
 
-	token, err := uc.authService.GenerateToken(username, user.ID.Hex(), user.Email)
+	token, err := uc.authService.GenerateToken(username, user.ID.Hex(), user.Email, user.Role)
 	if err != nil {
 		return "", fmt.Errorf("could not generate token: %w", err)
 	}
