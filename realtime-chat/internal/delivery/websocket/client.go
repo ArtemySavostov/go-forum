@@ -1,7 +1,6 @@
 package websocket
 
 import (
-	"bytes"
 	"log"
 	"time"
 
@@ -30,30 +29,8 @@ type Client struct {
 	clientID string
 
 	roomID string
-}
 
-func (c *Client) readPump() {
-	defer func() {
-		c.hub.Unregister <- c
-		c.conn.Close()
-	}()
-	c.conn.SetReadLimit(maxMessageSize)
-	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
-	for {
-		_, message, err := c.conn.ReadMessage()
-		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Printf("error: %v", err)
-			}
-			break
-		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-
-		// messageWithRoom := []byte(c.roomID + ": " + string(message))
-
-		// c.hub.Broadcast <- messageWithRoom
-	}
+	senderName string
 }
 
 func (c *Client) writePump() {

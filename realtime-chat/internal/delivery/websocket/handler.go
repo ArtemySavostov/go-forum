@@ -38,7 +38,6 @@ func NewHandler(hub *Hub, authService auth.AuthServiceClient, chatUC ChatUsecase
 }
 
 func (h *Handler) HandleWebSocket(c *gin.Context) {
-	log.Println("HandleWebSocket called")
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -48,13 +47,15 @@ func (h *Handler) HandleWebSocket(c *gin.Context) {
 
 	clientID := c.Query("clientID")
 	roomID := c.Query("roomID")
+	senderName := c.Query("sender_name")
 
 	client := &Client{
-		conn:     conn,
-		hub:      h.hub,
-		send:     make(chan []byte, 256),
-		clientID: clientID,
-		roomID:   roomID,
+		conn:       conn,
+		hub:        h.hub,
+		send:       make(chan []byte, 256),
+		clientID:   clientID,
+		roomID:     roomID,
+		senderName: senderName,
 	}
 
 	h.hub.Register <- client

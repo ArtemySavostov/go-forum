@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
 	"os"
+	"time"
 
 	"realtime-chat/internal/app"
 	"realtime-chat/internal/delivery/websocket"
@@ -80,6 +82,28 @@ func main() {
 	go func() {
 		if err := grpcserver.StartGRPCServer(lis); err != nil {
 			log.Fatalf("failed to start gRPC server: %v", err)
+		}
+	}()
+	cleanupInterval := 10 * time.Second
+
+	runCleanup := func() {
+		ctx := context.Background()
+		olderThan := time.Now().Add(10 * time.Second)
+		err := messageRepo.DeleteOldMessages(ctx, olderThan)
+		if err != nil {
+			log.Printf("ошибка при удалении старых сообщений: %v", err)
+		} else {
+			log.Println("Очистка старых сообщений выполнена успешно")
+		}
+	}
+
+	ticker := time.NewTicker(cleanupInterval)
+	defer ticker.Stop()
+
+	go func() {
+		for range ticker.C {
+			log.Println("Запуск очистки старых сообщений...")
+			runCleanup()
 		}
 	}()
 

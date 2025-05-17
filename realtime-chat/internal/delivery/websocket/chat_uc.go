@@ -87,3 +87,9 @@ func (c *chatUsecase) CreateMessage(message *entity.Message) error {
 	}
 	return nil
 }
+
+// func (s *chatUsecase) DeleteOldMessages(olderThan time.Time) {
+// 	if s.messageRepo != nil {
+// 		s.messageRepo.DeleteOldMessages(context.Background(), olderThan)
+// 	}
+// }
