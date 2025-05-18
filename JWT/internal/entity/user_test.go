@@ -14,6 +14,7 @@ func TestUserMarshalJSON(t *testing.T) {
 		Username: "testuser",
 		Email:    "test@example.com",
 		Password: "password123",
+		Role:     "user",
 	}
 
 	jsonData, err := json.Marshal(user)
@@ -21,14 +22,14 @@ func TestUserMarshalJSON(t *testing.T) {
 		t.Fatalf("Unexpected error marshaling User: %v", err)
 	}
 
-	expectedJSON := `{"id":"` + user.ID.Hex() + `","username":"testuser","email":"test@example.com"}`
+	expectedJSON := `{"id":"` + user.ID.Hex() + `","username":"testuser","email":"test@example.com","role":"user"}`
 	if string(jsonData) != expectedJSON {
 		t.Errorf("Unexpected JSON output:\nGot: %s\nExpected: %s", string(jsonData), expectedJSON)
 	}
 }
 
 func TestUnmarshalJSON(t *testing.T) {
-	jsonData := `{"id":"65167b252e2a8d67d66b4a0f","username":"testuser","email":"test@example.com"}`
+	jsonData := `{"id":"65167b252e2a8d67d66b4a0f","username":"testuser","email":"test@example.com", "role":"user"}`
 	var user entity.User
 	err := json.Unmarshal([]byte(jsonData), &user)
 	if err != nil {
@@ -36,7 +37,7 @@ func TestUnmarshalJSON(t *testing.T) {
 	}
 
 	expectedID, _ := primitive.ObjectIDFromHex("65167b252e2a8d67d66b4a0f")
-	if user.ID != expectedID || user.Username != "testuser" || user.Email != "test@example.com" {
+	if user.ID != expectedID || user.Username != "testuser" || user.Email != "test@example.com" || user.Role != "user" {
 		t.Errorf("Unexpected User data after unmarshaling")
 	}
 }

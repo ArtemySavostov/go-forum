@@ -20,6 +20,7 @@ func TestUserHandler_GetUser(t *testing.T) {
 		name              string
 		userID            string
 		authToken         string
+		role              string
 		expectedStatus    int
 		expectedBody      string
 		getUserMock       func(m *MockUserRepository, authService *MockJWTAuthService, userID primitive.ObjectID)
@@ -28,15 +29,17 @@ func TestUserHandler_GetUser(t *testing.T) {
 		{
 			name:           "Successful GetUser",
 			userID:         "649f0e648e37756407f299bc",
+			role:           "user",
 			authToken:      "validtoken",
 			expectedStatus: http.StatusOK,
-			expectedBody:   `{"id":"649f0e648e37756407f299bc","username":"testuser","email":"test@example.com"}`,
+			expectedBody:   `{"id":"649f0e648e37756407f299bc","username":"testuser","email":"test@example.com", "role":"user"}`,
 			getUserMock: func(m *MockUserRepository, authService *MockJWTAuthService, userID primitive.ObjectID) {
 				m.On("GetUserById", mock.Anything, userID).Return(entity.User{
 					ID:       userID,
 					Username: "testuser",
 					Email:    "test@example.com",
 					Password: "hashedpassword",
+					Role:     "user",
 				}, nil).Once()
 			},
 			validateTokenMock: func(m *MockJWTAuthService, token string) {
@@ -98,7 +101,7 @@ func TestUserHandler_GetUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// Arrange
+
 			mockUserRepo := new(MockUserRepository)
 			mockAuthService := new(MockJWTAuthService)
 
@@ -116,10 +119,8 @@ func TestUserHandler_GetUser(t *testing.T) {
 
 			recorder := httptest.NewRecorder()
 
-			// Act
 			router.ServeHTTP(recorder, req)
 
-			// Assert
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 			assert.JSONEq(t, tc.expectedBody, recorder.Body.String())
 

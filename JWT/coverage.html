@@ -634,15 +634,14 @@ func (r *MySQLUserRepository) Create(ctx context.Context, user *entity.User) err
         user.ID = objectID
         idString := objectID.Hex()
 
-        query := "INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)"
+        query := "INSERT INTO users (id, username, email, password, role) VALUES (?, ?, ?, ?, ?)"
 
-        _, err := r.db.ExecContext(ctx, query, idString, user.Username, user.Email, user.Password)
+        _, err := r.db.ExecContext(ctx, query, idString, user.Username, user.Email, user.Password, user.Role)
         if err != nil </span><span class="cov0" title="0">{
                 log.Printf("failed to ExecContext: %v", err)
                 return fmt.Errorf("failed to create user: %w", err)
         }</span>
 
-        //user.ID = objectID
         <span class="cov0" title="0">return nil</span>
 }
 
@@ -691,8 +690,8 @@ func (r *MySQLUserRepository) Delete(ctx context.Context, id primitive.ObjectID)
 func (r *MySQLUserRepository) GetByUsername(ctx context.Context, username string) (entity.User, error) <span class="cov0" title="0">{
         var user entity.User
         var idString string
-        query := "SELECT id, username, email, password FROM users WHERE username = ?"
-        err := r.db.QueryRowContext(ctx, query, username).Scan(&amp;idString, &amp;user.Username, &amp;user.Email, &amp;user.Password)
+        query := "SELECT id, username, email, password, role FROM users WHERE username = ?"
+        err := r.db.QueryRowContext(ctx, query, username).Scan(&amp;idString, &amp;user.Username, &amp;user.Email, &amp;user.Password, &amp;user.Role)
         if err != nil </span><span class="cov0" title="0">{
                 if errors.Is(err, sql.ErrNoRows) </span><span class="cov0" title="0">{
                         return entity.User{}, fmt.Errorf("user not found")
@@ -993,6 +992,7 @@ func (uc *authUseCase) Register(ctx context.Context, username, email, password s
                 Username: username,
                 Email:    email,
                 Password: string(hashedPassword),
+                Role:     "user",
         }
 
         err = uc.userRepo.Create(ctx, user)
@@ -1000,7 +1000,7 @@ func (uc *authUseCase) Register(ctx context.Context, username, email, password s
                 return "", fmt.Errorf("could not create user: %w", err)
         }</span>
 
-        <span class="cov0" title="0">token, err := uc.authService.GenerateToken(username, user.ID.Hex(), email)
+        <span class="cov0" title="0">token, err := uc.authService.GenerateToken(username, user.ID.Hex(), email, user.Role)
         if err != nil </span><span class="cov0" title="0">{
                 return "", fmt.Errorf("could not generate token: %w", err)
         }</span>
@@ -1019,7 +1019,7 @@ func (uc *authUseCase) Login(ctx context.Context, username, password string) (st
                 return "", errors.New("invalid credentials")
         }</span>
 
-        <span class="cov0" title="0">token, err := uc.authService.GenerateToken(username, user.ID.Hex(), user.Email)
+        <span class="cov0" title="0">token, err := uc.authService.GenerateToken(username, user.ID.Hex(), user.Email, user.Role)
         if err != nil </span><span class="cov0" title="0">{
                 return "", fmt.Errorf("could not generate token: %w", err)
         }</span>
@@ -1084,6 +1084,7 @@ func (uc *userUseCase) CreateUser(username, email, password string) (entity.User
                 Username: username,
                 Email:    email,
                 Password: string(hashedPassword),
+                Role:     "user",
         }
 
         err = uc.userRepo.Create(context.Background(), user)
@@ -1257,7 +1258,7 @@ func NewJWTAuthService(secretKey string) *JWTAuthService <span class="cov0" titl
         }
 }</span>
 
-func (s *JWTAuthService) GenerateToken(username string, userID string, email string) (string, error) <span class="cov0" title="0">{
+func (s *JWTAuthService) GenerateToken(username string, userID string, email string, role string) (string, error) <span class="cov0" title="0">{
         loadEnv()
 
         secretKey := os.Getenv("JWT_SECRET")
@@ -1275,6 +1276,7 @@ func (s *JWTAuthService) GenerateToken(username string, userID string, email str
                 "id":       userID,
                 "email":    email,
                 "exp":      time.Now().Add(tokenDuration).Unix(),
+                "role":     role,
         })
 
         tokenString, err := token.SignedString([]byte(secretKey))
