@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
-	"JWT/internal/app"
 	"JWT/internal/delivery/gin"
 	"JWT/internal/delivery/gin/handlers"
+	"JWT/internal/repository"
 	"JWT/internal/usecase"
 	"JWT/pkg/auth"
 	"JWT/pkg/database"
@@ -54,7 +54,7 @@ func main() {
 	defer db.Close()
 
 	fmt.Println("Successfully connected to MySQL!")
-	userRepo := app.NewMySQLUserRepository(db)
+	userRepo := repository.NewMySQLUserRepository(db)
 
 	// mongoURI := os.Getenv("MONGO_URI")
 	// if mongoURI == "" {

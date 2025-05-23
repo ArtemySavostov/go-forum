@@ -9,7 +9,7 @@ import (
 
 	"github.com/google/uuid"
 
-	_ "article/models"
+	_ "article/internal/delivery/gin/handlers/models"
 
 	"github.com/gin-gonic/gin"
 )

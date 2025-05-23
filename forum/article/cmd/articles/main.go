@@ -1,9 +1,9 @@
 package main
 
 import (
-	"article/internal/app"
 	"article/internal/delivery/gin"
 	"article/internal/delivery/gin/handlers"
+	"article/internal/repository"
 	"article/internal/usecase"
 	"context"
 	"fmt"
@@ -50,10 +50,10 @@ func main() {
 		}
 	}()
 
-	articleRepo := app.NewMongoDBArticleRepository(client.Database("forum_db").Collection("article"))
+	articleRepo := repository.NewMongoDBArticleRepository(client.Database("forum_db").Collection("article"))
 	articleUC := usecase.NewArticleUseCase(articleRepo)
 	articleHandler := handlers.NewArticleHandler(articleUC)
-	commentRepo := app.NewMongoDBCommentRepository(client.Database("forum_db").Collection("comment"))
+	commentRepo := repository.NewMongoDBCommentRepository(client.Database("forum_db").Collection("comment"))
 	commentUC := usecase.NewCommentUseCase(commentRepo)
 	//userService := handlers.NewUsersServiceClient("http://localhost:8088")
 	commentHandler := handlers.NewCommentHandler(commentUC)

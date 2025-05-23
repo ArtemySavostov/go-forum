@@ -5,8 +5,8 @@ import (
 
 	"net/http"
 
+	_ "JWT/internal/delivery/gin/handlers/models"
 	"JWT/internal/usecase"
-	_ "JWT/models"
 
 	"github.com/gin-gonic/gin"
 )

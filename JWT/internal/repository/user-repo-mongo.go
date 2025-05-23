@@ -1,4 +1,4 @@
-package app
+package repository
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"JWT/internal/entity"
-	"JWT/internal/repository"
+
 	"time"
 
 	"errors"
@@ -20,7 +20,7 @@ type MongoDBUserRepository struct {
 	collection *mongo.Collection
 }
 
-func NewMongoDBUserRepository(collection *mongo.Collection) repository.UserRepository {
+func NewMongoDBUserRepository(collection *mongo.Collection) UserRepository {
 	return &MongoDBUserRepository{collection: collection}
 }
 
