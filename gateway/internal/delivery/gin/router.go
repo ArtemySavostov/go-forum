@@ -33,6 +33,7 @@ func SetupRouter(gatewayHandler *handlers.GatewayHandler) *gin.Engine {
 
 	r.GET("/articles/:articleId/comments", gatewayHandler.ProxyToArticlesService)
 	r.POST("/articles/:articleId/comments", gatewayHandler.ProxyToArticlesService)
+	r.DELETE("/admin/:id", gatewayHandler.ProxyToArticlesService)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

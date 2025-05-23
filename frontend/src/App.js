@@ -13,6 +13,7 @@ import { jwtDecode } from "jwt-decode";
 import './App.css';
 
 const API_URL = '/articles';
+const ADMIN_URL = 'http://localhost:8000'
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
@@ -118,7 +119,7 @@ const App = () => {
     const handleDeleteArticle = useCallback(async (articleId) => {
       try {
         const token = localStorage.getItem('token');
-        console.log({ token }); // <--- Добавьте это
+        console.log({ token }); 
          if (token) {
           try {
             const decodedToken = jwtDecode(token);
@@ -132,7 +133,7 @@ const App = () => {
             console.error("Error decoding token:", error);
           }
         }
-        await apiRequest(`http://localhost:8080/admin/${articleId}`, {
+        await apiRequest(`http://localhost:3000/admin/${articleId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`, 

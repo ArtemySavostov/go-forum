@@ -5,9 +5,7 @@ import (
 	"article/internal/usecase"
 	"context"
 	"net/http"
-	"time"
-
-	"github.com/google/uuid"
+	"strings"
 
 	_ "article/internal/delivery/gin/handlers/models"
 
@@ -53,12 +51,7 @@ func (h *ArticleHandler) CreateArticle(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	article.AuthorID = userID
-	article.ArticleID = uuid.New().String()
-	article.CreatedAt = time.Now()
-	article.UpdatedAt = time.Now()
-
-	err := h.articleUC.CreateArticle(context.Background(), &article)
+	err := h.articleUC.CreateArticle(context.Background(), &article, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create article"})
 		return
@@ -132,28 +125,23 @@ func (h *ArticleHandler) UpdateArticle(c *gin.Context) {
 		return
 	}
 
-	var article entity.Article
-	if err := c.ShouldBindJSON(&article); err != nil {
+	var updatedArticle entity.Article
+	if err := c.ShouldBindJSON(&updatedArticle); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	existingArticle, err := h.articleUC.GetArticleByID(context.Background(), articleID)
+	err := h.articleUC.UpdateArticle(context.Background(), articleID, userID, &updatedArticle)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
-		return
-	}
-	if existingArticle.AuthorID != userID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
-		return
-	}
+		if strings.Contains(err.Error(), "unauthorized") {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
+			return
+		}
+		if strings.Contains(err.Error(), "not found") {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
+			return
+		}
 
-	existingArticle.Title = article.Title
-	existingArticle.Content = article.Content
-	existingArticle.UpdatedAt = time.Now()
-
-	err = h.articleUC.UpdateArticle(context.Background(), existingArticle)
-	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update article"})
 		return
 	}

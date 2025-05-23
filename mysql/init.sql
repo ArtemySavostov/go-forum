@@ -1,0 +1,17 @@
+CREATE DATABASE IF NOT EXISTS forum_db;
+
+USE forum_db;
+
+CREATE TABLE IF NOT EXISTS users (
+  id VARCHAR(36) NOT NULL PRIMARY KEY,
+  username VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('user', 'admin') NOT NULL DEFAULT 'user'
+);
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'arti2002';
+ALTER USER 'root'@'%' IDENTIFIED BY 'arti2002';
+
+
+FLUSH PRIVILEGES;

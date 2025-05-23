@@ -9,10 +9,8 @@ import (
 
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type CommentHandler struct {
@@ -93,14 +91,9 @@ func (h *CommentHandler) CreateComment(c *gin.Context) {
 		return
 	}
 
-	comment.CommentAuthorID = userID
-	comment.CommentID = uuid.New().String()
-	comment.CreatedCommentAt = time.Now()
-	comment.UpdatedCommentAt = time.Now()
-	comment.ArticleID = articleID
 	comment.CommentAuthorName = username.(string)
 
-	err := h.commentUC.CreateComment(context.Background(), &comment)
+	err := h.commentUC.CreateComment(context.Background(), &comment, userID, articleID, username.(string))
 	log.Printf("Result from CreateComment UC: %v", err)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create comment"})
@@ -169,10 +162,7 @@ func (h *CommentHandler) UpdateComment(c *gin.Context) {
 		return
 	}
 
-	//existingComment.CommentAuthorName = comment.CommentAuthorName
-	existingComment.CommentText = comment.CommentText
-	existingComment.UpdatedCommentAt = time.Now()
-	err = h.commentUC.UpdateComment(context.Background(), existingComment)
+	err = h.commentUC.UpdateComment(context.Background(), existingComment, comment.CommentText)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update comment"})
 		return

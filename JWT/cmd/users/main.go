@@ -36,15 +36,15 @@ func main() {
 
 	mysqlPass := os.Getenv("MYSQL_PASSWORD")
 	if mysqlPass == "" {
-		mysqlPass = "admin"
+		mysqlPass = "arti2002"
 	}
 
 	cfg := database.MySQLConfig{
-		Host:     "localhost",
+		Host:     os.Getenv("MYSQL_HOST"),
 		Port:     3306,
-		User:     "root",
-		Password: mysqlPass,
-		Database: "forum_db",
+		User:     os.Getenv("MYSQL_USER"),
+		Password: os.Getenv("MYSQL_ROOT_PASSWORD"),
+		Database: os.Getenv("MYSQL_DATABASE"),
 	}
 
 	db, err := database.ConnectMySQL(cfg)

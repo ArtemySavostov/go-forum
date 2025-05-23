@@ -50,10 +50,8 @@ func (m *MongoDbCommentRepository) CreateComment(ctx context.Context, comment *e
 		return fmt.Errorf("failed to create comment: %w", err)
 	}
 
-	// Log the inserted ID
 	log.Printf("Inserted comment with ID: %v", result.InsertedID)
 
-	// Verify the insertion
 	var insertedComment entity.Comment
 	err = m.collection.FindOne(context.TODO(), bson.M{"_id": result.InsertedID}).Decode(&insertedComment)
 	if err != nil {
